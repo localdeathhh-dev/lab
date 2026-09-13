@@ -1,0 +1,2589 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+<title>CLOUD LAB</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#060608;
+  --text:#f2f3f7;
+  --muted:#93939f;
+  --muted2:#5a5a66;
+  --cyan:#63e5ff;
+  --violet:#a476ff;
+  --gold:#ffcf7d;
+  --pink:#ff5b9a;
+  --grad: linear-gradient(135deg,#63e5ff 0%, #a476ff 100%);
+  --glass-l: rgba(255,255,255,0.09);
+  --glass-d: rgba(255,255,255,0.03);
+  --glass-brd: rgba(255,255,255,0.14);
+  --sheet-bg: rgba(14,14,18,.92);
+  --font-head:'Unbounded', sans-serif;
+  --font-body:'Google Sans','Manrope',-apple-system,sans-serif;
+  --font-num:'Benzin','Unbounded',sans-serif;
+  --sb: env(safe-area-inset-bottom,0px);
+  --st: env(safe-area-inset-top,0px);
+  --smooth: cubic-bezier(.4,0,.2,1);
+  --ease: cubic-bezier(.22,1,.36,1);
+}
+[data-theme="light"]{
+  --bg:#f1f1f4;
+  --text:#0d0d10;
+  --muted:#6b6b76;
+  --muted2:#9a9aa4;
+  --glass-l: rgba(0,0,0,0.045);
+  --glass-d: rgba(0,0,0,0.015);
+  --glass-brd: rgba(0,0,0,0.09);
+  --sheet-bg: rgba(250,250,252,.95);
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none;}
+input{user-select:text;}
+html,body{background:var(--bg);color:var(--text);font-family:var(--font-body);overflow-x:hidden;width:100%;transition:background .4s var(--smooth), color .4s var(--smooth);}
+body{display:flex;justify-content:center;min-height:100vh;}
+::-webkit-scrollbar{display:none;}
+
+.app{width:100%;max-width:480px;min-height:100vh;position:relative;overflow-x:hidden;background:var(--bg);}
+
+.bg-glow{position:fixed;inset:0;max-width:480px;margin:0 auto;z-index:0;overflow:hidden;pointer-events:none;}
+.bg-glow span{position:absolute;border-radius:50%;filter:blur(80px);opacity:.2;}
+.bg-glow span:nth-child(1){width:260px;height:260px;background:var(--cyan);top:-100px;left:-70px;animation:floatA 12s ease-in-out infinite;}
+.bg-glow span:nth-child(2){width:240px;height:240px;background:var(--violet);top:160px;right:-90px;animation:floatB 14s ease-in-out infinite;}
+@keyframes floatA{0%,100%{transform:translate(0,0);}50%{transform:translate(25px,35px);}}
+@keyframes floatB{0%,100%{transform:translate(0,0);}50%{transform:translate(-20px,25px);}}
+
+.glass{
+  position:relative;overflow:hidden;
+  background:linear-gradient(155deg, var(--glass-l), var(--glass-d));
+  backdrop-filter:blur(26px) saturate(160%);
+  -webkit-backdrop-filter:blur(26px) saturate(160%);
+  border:1px solid var(--glass-brd);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.14), 0 10px 30px rgba(0,0,0,.3);
+}
+.mask-fix{-webkit-mask-image:-webkit-radial-gradient(white, black);}
+
+/* ===== AGE GATE ===== */
+.age-gate{position:fixed;inset:0;background:#020203;z-index:1000;display:flex;align-items:center;justify-content:center;padding:24px;}
+.age-gate-inner{width:100%;max-width:340px;border-radius:28px;padding:32px 26px;text-align:center;}
+.age-icon{font-size:44px;margin-bottom:16px;}
+.age-gate-inner h2{font-family:var(--font-head);font-weight:600;font-size:18px;margin-bottom:10px;color:#f2f3f7;}
+.age-gate-inner p{font-size:12.5px;color:#93939f;line-height:1.6;margin-bottom:24px;}
+.age-btn-row{display:flex;gap:10px;}
+.age-btn{flex:1;padding:14px;border-radius:16px;font-size:13px;font-weight:700;font-family:var(--font-body);border:none;}
+.age-btn.yes{background:var(--grad);color:#08080b;}
+.age-btn.no{background:rgba(255,255,255,.08);color:#93939f;border:1px solid rgba(255,255,255,.14);}
+.age-blocked{position:fixed;inset:0;background:#020203;z-index:1000;display:none;flex-direction:column;align-items:center;justify-content:center;padding:30px;text-align:center;gap:12px;}
+.age-blocked h2{font-family:var(--font-head);font-size:17px;color:#f2f3f7;}
+.age-blocked p{font-size:12.5px;color:#93939f;max-width:260px;line-height:1.6;}
+
+/* ===== CHECKOUT FORM ===== */
+.chk-field{margin-bottom:15px;}
+.chk-label{font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px;font-weight:700;}
+.chk-label em{font-style:normal;color:var(--muted2);text-transform:none;letter-spacing:0;font-weight:600;}
+.chk-input{width:100%;background:var(--glass-l);border:1px solid var(--glass-brd);border-radius:14px;padding:13px 15px;color:var(--text);font-family:var(--font-body);font-size:13px;outline:none;transition:border-color .3s;}
+.chk-input:focus{border-color:rgba(99,229,255,.55);}
+.chk-input::placeholder{color:var(--muted2);}
+textarea.chk-input{resize:none;min-height:74px;line-height:1.5;}
+.method-row{display:flex;gap:8px;flex-wrap:wrap;}
+.method-chip{flex:1;padding:13px 8px;border-radius:15px;background:rgba(255,255,255,.05);border:1px solid var(--glass-brd);font-size:12px;font-weight:700;color:var(--muted);display:flex;align-items:center;justify-content:center;gap:7px;transition:all .25s var(--smooth);font-family:var(--font-body);}
+.method-chip.active{background:var(--grad);color:#08080b;border-color:transparent;}
+.district-row{display:flex;flex-wrap:wrap;gap:8px;}
+.district-chip{display:flex;align-items:center;gap:6px;padding:10px 13px;border-radius:13px;background:var(--glass-l);border:1px solid var(--glass-brd);font-size:11.5px;font-weight:700;color:var(--muted);transition:all .25s var(--smooth);}
+.district-chip small{font-family:var(--font-num);font-size:10px;opacity:.75;font-weight:800;}
+.district-chip.active{background:var(--grad);color:#08080b;border-color:transparent;}
+.district-chip.active small{opacity:.85;}
+.map-open-btn{width:100%;display:flex;align-items:center;justify-content:center;gap:8px;padding:12px;border-radius:14px;background:rgba(99,229,255,.1);color:var(--cyan);font-size:12px;font-weight:700;margin-top:9px;}
+.chk-submit{width:100%;background:var(--grad);color:#08080b;font-weight:800;font-size:13.5px;padding:15px;border-radius:16px;display:flex;align-items:center;justify-content:center;gap:8px;}
+
+
+
+/* ===== ADMIN PIN (полноэкранный) ===== */
+.pin-overlay{position:fixed;inset:0;z-index:400;background:var(--bg);display:none;flex-direction:column;padding:calc(14px + var(--st)) 24px calc(30px + var(--sb));}
+.pin-overlay.show{display:flex;}
+.pin-top{display:flex;justify-content:flex-start;}
+.pin-mid{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:8px;}
+.pin-icon{width:88px;height:88px;border-radius:30px;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:38px;margin-bottom:10px;box-shadow:0 18px 44px rgba(99,229,255,.28);}
+.pin-mid h4{font-family:var(--font-head);font-weight:600;font-size:19px;}
+.pin-mid p{font-size:12.5px;color:var(--muted);}
+.pin-dots{display:flex;gap:18px;justify-content:center;margin-top:26px;}
+.pin-dots i{width:15px;height:15px;border-radius:50%;border:2px solid var(--glass-brd);transition:all .2s var(--smooth);}
+.pin-dots i.on{background:var(--grad);border-color:transparent;transform:scale(1.15);box-shadow:0 0 14px rgba(99,229,255,.45);}
+.pin-dots.shake{animation:shakeX .45s var(--smooth);}
+@keyframes shakeX{0%,100%{transform:translateX(0);}20%{transform:translateX(-13px);}40%{transform:translateX(13px);}60%{transform:translateX(-8px);}80%{transform:translateX(8px);}}
+.pin-pad{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;width:100%;max-width:320px;margin:0 auto;}
+.pin-key{padding:18px 0;border-radius:20px;background:var(--glass-l);border:1px solid var(--glass-brd);color:var(--text);font-family:var(--font-num);font-size:21px;font-weight:700;transition:transform .12s var(--smooth);}
+.pin-key:active{transform:scale(.93);background:var(--glass-d);}
+.pin-key.ghost{background:none;border:none;pointer-events:none;}
+.pin-err{font-size:11.5px;color:var(--pink);height:16px;margin-top:14px;}
+
+/* ===== SCREENS ===== */
+.screens{position:relative;z-index:2;padding-bottom:120px;min-height:100vh;}
+.screen{display:none;}
+.screen.active{display:block;}
+
+/* ===== TOPBAR ===== */
+.topbar{display:flex;align-items:center;justify-content:center;padding:calc(16px + var(--st)) 20px 4px;gap:10px;}
+.top-logo{display:flex;align-items:center;}
+.top-logo b{font-family:var(--font-head);font-weight:600;font-size:15px;letter-spacing:1.5px;padding:9px 12px;margin-left:-12px;cursor:pointer;}
+.top-icons{display:flex;gap:8px;}
+.gbtn{width:38px;height:38px;border-radius:13px;display:flex;align-items:center;justify-content:center;position:relative;}
+.gbtn svg{width:17px;height:17px;stroke:var(--text);}
+.gdot{position:absolute;top:8px;right:9px;width:6px;height:6px;border-radius:50%;background:var(--pink);}
+
+/* ===== HOME ===== */
+.hello-block{padding:16px 20px 4px;}
+.hello-block h1{font-family:var(--font-head);font-weight:500;font-size:20px;}
+.hello-block span{color:var(--muted);font-size:12px;display:block;margin-top:4px;}
+
+/* ===== VERTICAL BANNER CAROUSEL ===== */
+.banner-wrap{padding:16px 20px 4px;}
+.banner-frame{position:relative;border-radius:26px;overflow:hidden;height:170px;}
+.banner-scroll{display:flex;flex-direction:column;height:100%;overflow-y:auto;scroll-snap-type:y mandatory;}
+.banner-slide{flex-shrink:0;width:100%;height:170px;scroll-snap-align:start;position:relative;background:linear-gradient(135deg,#1a1a24,#0e0e13);}
+.banner-slide img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
+.banner-scrim{position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0) 35%, rgba(0,0,0,.7) 100%);}
+.banner-text{position:absolute;left:18px;right:44px;bottom:16px;z-index:2;}
+.banner-tag{display:inline-block;font-size:9px;font-weight:700;letter-spacing:.6px;padding:4px 10px;border-radius:99px;margin-bottom:8px;backdrop-filter:blur(10px);background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.2);color:#fff;}
+.banner-text h3{font-family:var(--font-head);font-weight:600;font-size:14.5px;line-height:1.3;color:#fff;}
+.dots-v{position:absolute;right:12px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:6px;z-index:3;}
+.dots-v i{width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,.3);transition:all .4s var(--smooth);}
+.dots-v i.active{background:#fff;height:16px;border-radius:4px;}
+
+/* ===== QUICK CATS (вау-плитки) ===== */
+.quick-cats{display:flex;flex-direction:column;gap:12px;padding:22px 20px 4px;}
+.qrow{display:flex;gap:12px;}
+.qrow .qcat.a{flex:1.7;}
+.qrow .qcat.b{flex:1;}
+.qrow.flip .qcat.a{flex:1;}
+.qrow.flip .qcat.b{flex:1.7;}
+.qcat{position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;min-height:112px;border-radius:28px;cursor:pointer;transition:transform .18s var(--smooth);}
+.qcat:active{transform:scale(.955);}
+.qcat::before{content:"";position:absolute;top:-45%;right:-25%;width:85%;height:130%;background:radial-gradient(circle at center, var(--qc), transparent 68%);opacity:.3;filter:blur(24px);pointer-events:none;}
+.qcat::after{content:"";position:absolute;top:-20%;bottom:-20%;left:-80%;width:45%;background:linear-gradient(100deg, transparent, rgba(255,255,255,.14), transparent);transform:skewX(-20deg);animation:qshine 5.2s var(--smooth) infinite;pointer-events:none;}
+@keyframes qshine{0%,60%{left:-80%;}100%{left:190%;}}
+.qcat .ic{position:relative;z-index:1;width:58px;height:58px;border-radius:21px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:center;font-size:31px;box-shadow:0 12px 28px rgba(0,0,0,.28);animation:qfloat 3.8s ease-in-out infinite;}
+@keyframes qfloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-5px);}}
+.qcat span{position:relative;z-index:1;font-size:10px;font-weight:700;letter-spacing:.4px;color:var(--text);opacity:.3;white-space:nowrap;overflow:hidden;max-width:88%;text-overflow:ellipsis;}
+[data-theme="light"] .qcat .ic{background:rgba(255,255,255,.6);border-color:rgba(255,255,255,.8);}
+[data-theme="light"] .qcat::after{background:linear-gradient(100deg, transparent, rgba(255,255,255,.4), transparent);}
+
+/* ===== POINTS CARD ===== */
+.points-card{margin:20px 20px 0;border-radius:24px;padding:16px 18px;display:flex;align-items:center;gap:14px;}
+.points-icon{width:42px;height:42px;border-radius:14px;background:linear-gradient(135deg,#ffe6a8,#ffb156);display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0;position:relative;z-index:1;}
+.points-text{flex:1;min-width:0;position:relative;z-index:1;}
+.points-text p{font-size:10.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:3px;}
+.points-text b{font-family:var(--font-num);font-size:20px;font-weight:700;color:var(--gold);display:block;white-space:nowrap;}
+
+.section{padding:24px 20px 4px;}
+.section-head{margin-bottom:14px;}
+.section-head h2{font-family:var(--font-head);font-weight:600;font-size:15px;}
+
+.search-box{display:flex;align-items:center;gap:10px;border-radius:18px;padding:13px 16px;margin:0 20px;transition:box-shadow .3s var(--smooth);}
+.search-box.focused{box-shadow:0 0 0 3px rgba(99,229,255,.16);}
+.search-box svg{width:16px;height:16px;stroke:var(--muted);flex-shrink:0;transition:stroke .3s;}
+.search-box.focused svg{stroke:var(--cyan);}
+.search-box input{background:none;border:none;outline:none;color:var(--text);font-family:var(--font-body);font-size:13.5px;width:100%;}
+.search-box input::placeholder{color:var(--muted2);}
+
+/* ===== SEGMENT CATEGORIES ===== */
+.segment-outer{padding:16px 20px 4px;}
+.segment-scroll{position:relative;display:flex;gap:4px;overflow-x:auto;padding:5px;border-radius:20px;}
+.segment-thumb{position:absolute;top:5px;bottom:5px;left:5px;width:70px;border-radius:15px;background:var(--grad);transition:left .45s var(--smooth), width .45s var(--smooth);z-index:0;}
+.segment-item{position:relative;z-index:1;flex-shrink:0;display:flex;align-items:center;gap:6px;padding:10px 15px;border-radius:15px;font-size:12px;font-weight:600;color:var(--muted);white-space:nowrap;transition:color .35s var(--smooth);background:none;border:none;font-family:var(--font-body);}
+.segment-item .seg-ic{font-size:13px;}
+.segment-item.active{color:#08080b;}
+
+/* ===== PRODUCT CARD ===== */
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.pcard{position:relative;border-radius:26px;overflow:hidden;aspect-ratio:3/4;opacity:0;transform:translateY(14px);animation:cardIn .5s var(--smooth) forwards;}
+@keyframes cardIn{to{opacity:1;transform:translateY(0);}}
+.pcard-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
+.pcard-scrim{position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0) 45%, rgba(0,0,0,.55) 100%);pointer-events:none;}
+.pcard-panel{position:absolute;left:6px;right:6px;bottom:6px;border-radius:16px;padding:8px 10px 9px;z-index:2;
+  background:linear-gradient(160deg, rgba(255,255,255,.16), rgba(255,255,255,.04));
+  backdrop-filter:blur(18px) saturate(160%); -webkit-backdrop-filter:blur(18px) saturate(160%);
+  border:1px solid rgba(255,255,255,.18);
+}
+.pcard-glow{position:absolute;left:18%;right:18%;top:-20px;height:40px;background:var(--grad);filter:blur(20px);opacity:.5;border-radius:50%;z-index:-1;pointer-events:none;}
+.pcard-top-row{display:flex;align-items:center;gap:6px;margin-bottom:1px;}
+.pcard-cat{font-size:8.5px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);}
+.pcard-dot{width:8px;height:8px;border-radius:50%;}
+.pcard-title{font-size:11.5px;font-weight:600;line-height:1.25;color:#fff;margin-bottom:2px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.pcard-bottom{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.pcard-price{font-family:var(--font-num);font-weight:700;font-size:12.5px;color:#fff;}
+.pcard-add-wrap{position:relative;flex-shrink:0;}
+.pcard-add{width:28px;height:28px;border-radius:10px;background:var(--grad);display:flex;align-items:center;justify-content:center;}
+.pcard-add svg{width:12px;height:12px;stroke:#08080b;stroke-width:2.8;}
+.pcard-count{position:absolute;top:-6px;right:-6px;min-width:17px;height:17px;padding:0 4px;border-radius:99px;background:var(--pink);color:#fff;font-size:9.5px;font-weight:800;display:flex;align-items:center;justify-content:center;line-height:1;}
+
+.pcard-badge{position:absolute;top:10px;left:10px;z-index:2;font-size:8px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;padding:5px 10px;border-radius:99px;color:#fff;backdrop-filter:blur(8px);box-shadow:0 4px 12px rgba(0,0,0,.25);}
+.pcard-badge.b-hit{background:linear-gradient(135deg,#ff5b9a,#ff8fb8);}
+.pcard-badge.b-new{background:linear-gradient(135deg,#63e5ff,#8feeff);color:#08080b;}
+.pcard-badge.b-sale{background:linear-gradient(135deg,#ffcf7d,#ffe3ae);color:#08080b;}
+.pcard-badge.b-top{background:linear-gradient(135deg,#a476ff,#c3a6ff);}
+.pcard-badge.b-def{background:var(--grad);color:#08080b;}
+
+.ph1{background:linear-gradient(135deg,#123044,#0a1720);}
+.ph2{background:linear-gradient(135deg,#241033,#150a1f);}
+.ph3{background:linear-gradient(135deg,#0f2a1e,#0a1a14);}
+.ph4{background:linear-gradient(135deg,#332310,#1f160a);}
+.ph5{background:linear-gradient(135deg,#33101c,#1f0a12);}
+.ph6{background:linear-gradient(135deg,#0a1f30,#071420);}
+.ph7{background:linear-gradient(135deg,#210f33,#140a1f);}
+
+.skel-card{display:none;}
+
+.empty{display:flex;flex-direction:column;align-items:center;text-align:center;padding:60px 30px;gap:14px;}
+.empty-icon{width:76px;height:76px;border-radius:24px;display:flex;align-items:center;justify-content:center;font-size:30px;}
+.empty h3{font-family:var(--font-head);font-weight:600;font-size:14px;}
+.empty p{font-size:12px;color:var(--muted);max-width:220px;line-height:1.5;}
+.empty-btn{margin-top:6px;background:var(--grad);color:#08080b;font-weight:700;font-size:12.5px;padding:13px 26px;border-radius:16px;}
+
+/* ===== QTY STEPPER (FIXED — no seam / no white bleed) ===== */
+.qty-mini{display:flex;align-items:center;background:var(--glass-l);border:1px solid var(--glass-brd);border-radius:14px;overflow:hidden;flex-shrink:0;}
+.qty-mini button{width:32px;height:32px;display:flex;align-items:center;justify-content:center;color:var(--cyan);background:none;border:none;}
+.qty-mini button svg{width:11px;height:11px;stroke:currentColor;stroke-width:2.6;}
+.qty-mini span{min-width:24px;text-align:center;font-family:var(--font-num);font-size:13px;color:var(--text);font-weight:600;}
+
+.cart-item{display:flex;gap:12px;border-radius:20px;padding:11px;margin-bottom:12px;align-items:center;}
+.cart-item-media{width:58px;height:58px;border-radius:15px;overflow:hidden;flex-shrink:0;}
+.cart-item-media img{width:100%;height:100%;object-fit:cover;}
+.cart-item-info{flex:1;min-width:0;}
+.cart-item-info h4{font-size:12px;font-weight:600;line-height:1.3;margin-bottom:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.cart-item-info .variant-tag{font-size:10px;color:var(--muted);margin-bottom:8px;display:block;}
+.cart-item-bottom{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.cart-item-price{font-family:var(--font-num);font-size:12.5px;font-weight:700;flex-shrink:0;}
+.remove-btn{width:30px;height:30px;border-radius:10px;background:rgba(255,91,122,.12);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.remove-btn svg{width:12px;height:12px;stroke:var(--pink);}
+
+.summary{border-radius:22px;padding:17px;margin-top:8px;}
+.sum-row{display:flex;justify-content:space-between;font-size:12.5px;color:var(--muted);margin-bottom:10px;}
+.sum-divider{height:1px;background:var(--glass-brd);margin:12px 0;}
+.sum-total{display:flex;justify-content:space-between;align-items:center;}
+.sum-total b{font-family:var(--font-num);font-size:18px;}
+.checkout-btn{width:100%;background:var(--grad);color:#08080b;font-weight:800;font-size:13.5px;padding:16px;border-radius:19px;margin-top:16px;display:flex;align-items:center;justify-content:center;gap:8px;}
+.checkout-btn svg{width:14px;height:14px;stroke:#08080b;}
+
+/* ===== PROFILE ===== */
+.profile-head{display:flex;flex-direction:column;align-items:center;padding:14px 20px 4px;}
+.avatar-big{width:76px;height:76px;border-radius:26px;display:flex;align-items:center;justify-content:center;font-size:30px;margin-bottom:12px;background:var(--grad);}
+.profile-head h2{font-family:var(--font-head);font-weight:600;font-size:15px;margin-bottom:4px;}
+.profile-head p{font-size:11px;color:var(--muted);}
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:18px 20px 0;}
+.stat-box{border-radius:20px;padding:15px 10px;text-align:center;}
+.stat-box b{font-family:var(--font-num);font-size:17px;display:block;margin-bottom:2px;}
+.stat-box span{font-size:9.5px;color:var(--muted);}
+
+.menu-list{padding:20px 20px 0;}
+.menu-item{display:flex;align-items:center;gap:12px;padding:14px;border-radius:18px;margin-bottom:8px;}
+.menu-item .ic{width:36px;height:36px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;}
+.menu-item p{flex:1;font-size:12.5px;font-weight:500;}
+.menu-item .chev{width:13px;height:13px;stroke:var(--muted2);}
+.theme-switch{width:44px;height:26px;border-radius:99px;background:var(--glass-l);border:1px solid var(--glass-brd);position:relative;flex-shrink:0;}
+.theme-switch i{position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:var(--grad);transition:transform .35s var(--smooth);}
+.theme-switch.on i{transform:translateX(18px);}
+
+/* ===== REFERRAL SCREEN ===== */
+.ref-hero{margin:16px 20px 0;border-radius:26px;padding:26px 20px;text-align:center;}
+.ref-hero .emoji{font-size:38px;margin-bottom:10px;}
+.ref-hero h2{font-family:var(--font-head);font-weight:600;font-size:16px;margin-bottom:8px;}
+.ref-hero p{font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:20px;}
+.ref-code-box{display:flex;align-items:center;justify-content:space-between;background:var(--glass-l);border:1px dashed var(--glass-brd);border-radius:16px;padding:14px 16px;margin-bottom:14px;}
+.ref-code-box b{font-family:var(--font-num);font-size:16px;letter-spacing:2px;color:var(--cyan);}
+.ref-code-box span{font-size:11px;color:var(--muted);}
+.ref-share-btn{width:100%;background:var(--grad);color:#08080b;font-weight:700;font-size:13px;padding:14px;border-radius:16px;display:flex;align-items:center;justify-content:center;gap:8px;}
+.ref-stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:18px 20px 0;}
+
+/* ===== ADMIN PANEL ===== */
+.admin-tabs{display:flex;gap:7px;overflow-x:auto;padding:14px 20px 6px;-webkit-overflow-scrolling:touch;}
+.admin-tab{flex-shrink:0;padding:10px 15px;border-radius:14px;font-size:11.5px;font-weight:700;color:var(--muted);background:rgba(255,255,255,.05);border:1px solid var(--glass-brd);white-space:nowrap;font-family:var(--font-body);transition:all .25s var(--smooth);}
+.admin-tab.active{background:var(--grad);color:#08080b;border-color:transparent;}
+.admin-body{padding:12px 20px 46px;}
+.admin-stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.astat{border-radius:20px;padding:15px 14px;}
+.astat span{font-size:9.5px;color:var(--muted);display:block;margin-bottom:5px;}
+.astat b{font-family:var(--font-num);font-size:19px;}
+.chart-wrap{border-radius:20px;padding:16px 16px 32px;margin-top:12px;}
+.chart-wrap h4{font-family:var(--font-head);font-size:12px;font-weight:600;margin-bottom:14px;}
+.chart{display:flex;align-items:flex-end;gap:7px;height:96px;}
+.chart .bar{flex:1;border-radius:7px 7px 3px 3px;background:linear-gradient(180deg,rgba(99,229,255,.25),rgba(99,229,255,.55));min-height:5px;position:relative;transition:height .5s var(--ease);}
+.chart .bar.hi{background:var(--grad);}
+.chart .bar span{position:absolute;bottom:-19px;left:50%;transform:translateX(-50%);font-size:8.5px;color:var(--muted);white-space:nowrap;}
+.order-card{border-radius:20px;padding:15px;margin-bottom:10px;}
+.order-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px;}
+.order-head b{font-family:var(--font-num);font-size:13px;}
+.order-date{font-size:10px;color:var(--muted2);}
+.status-chip{font-size:9.5px;font-weight:800;padding:5px 10px;border-radius:99px;letter-spacing:.3px;white-space:nowrap;}
+.order-info{font-size:11.5px;color:var(--muted);line-height:1.7;}
+.order-info b{color:var(--text);font-weight:600;}
+.order-items{font-size:11.5px;line-height:1.8;color:var(--muted);border-top:1px dashed var(--glass-brd);margin-top:8px;padding-top:8px;}
+.order-total{display:flex;justify-content:space-between;margin-top:8px;font-size:12.5px;}
+.order-total b{font-family:var(--font-num);}
+.order-actions{display:flex;gap:7px;margin-top:11px;align-items:center;}
+.status-select{flex:1;min-width:0;appearance:none;-webkit-appearance:none;background:var(--glass-l);border:1px solid var(--glass-brd);color:var(--text);border-radius:12px;padding:10px 30px 10px 12px;font-size:11.5px;font-weight:700;font-family:var(--font-body);outline:none;background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="6" viewBox="0 0 10 6"><path d="M1 1l4 4 4-4" stroke="%2393939f" stroke-width="2" fill="none" stroke-linecap="round"/></svg>');background-repeat:no-repeat;background-position:right 12px center;}
+.cat-color{width:34px;height:34px;border-radius:11px;border:1px solid var(--glass-brd);background:none;padding:0;flex-shrink:0;cursor:pointer;}
+.cat-emoji{width:46px;height:46px;border-radius:14px;background:var(--glass-l);border:1px solid var(--glass-brd);color:var(--text);text-align:center;font-size:22px;outline:none;flex-shrink:0;padding:0;font-family:var(--font-body);}
+.mini-btn{padding:8px 12px;border-radius:11px;font-size:10.5px;font-weight:700;background:rgba(255,255,255,.07);border:1px solid var(--glass-brd);color:var(--text);font-family:var(--font-body);}
+.mini-btn.danger{color:var(--pink);background:rgba(255,91,122,.1);border-color:rgba(255,91,122,.25);}
+.mini-btn.grad{background:var(--grad);color:#08080b;border-color:transparent;}
+.filter-row{display:flex;gap:7px;overflow-x:auto;padding-bottom:12px;}
+.fchip{flex-shrink:0;padding:8px 13px;border-radius:99px;font-size:10.5px;font-weight:700;color:var(--muted);background:rgba(255,255,255,.05);border:1px solid var(--glass-brd);white-space:nowrap;}
+.fchip.active{color:#08080b;background:var(--grad);border-color:transparent;}
+.admin-row{display:flex;align-items:center;gap:11px;border-radius:18px;padding:12px 13px;margin-bottom:9px;}
+.admin-row .ric{width:38px;height:38px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;}
+.admin-row .rmain{flex:1;min-width:0;}
+.admin-row .rmain b{font-size:12.5px;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.admin-row .rmain span{font-size:10.5px;color:var(--muted);}
+.rbtn{width:32px;height:32px;border-radius:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:rgba(255,255,255,.07);font-size:13px;}
+.admin-form{border-radius:20px;padding:16px;margin-bottom:12px;}
+.admin-form .chk-field{margin-bottom:12px;}
+.form-actions{display:flex;gap:9px;margin-top:4px;}
+.form-actions .chk-submit{flex:1.5;padding:13px;font-size:12.5px;}
+.form-actions .cancel-btn{flex:1;padding:13px;border-radius:16px;background:rgba(255,255,255,.07);border:1px solid var(--glass-brd);color:var(--muted);font-weight:700;font-size:12.5px;display:flex;align-items:center;justify-content:center;}
+.db-dot{width:9px;height:9px;border-radius:50%;display:inline-block;margin-right:6px;}
+.db-dot.on{background:#4ade80;box-shadow:0 0 8px rgba(74,222,128,.7);}
+.db-dot.off{background:#5a5a66;}
+.note{font-size:10.5px;color:var(--muted);line-height:1.6;}
+.log-line{font-size:11px;color:var(--muted);padding:9px 2px;border-bottom:1px dashed var(--glass-brd);line-height:1.5;}
+.log-line b{color:var(--text);font-weight:600;}
+.toggle-chip{padding:8px 14px;border-radius:99px;font-size:11px;font-weight:700;background:rgba(255,255,255,.06);border:1px solid var(--glass-brd);color:var(--muted);}
+.toggle-chip.on{background:rgba(74,222,128,.15);color:#4ade80;border-color:rgba(74,222,128,.3);}
+
+/* ===== NAV BAR (анимации с нуля: компактная пилюля) ===== */
+.nav-stage{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;height:112px;z-index:90;pointer-events:none;}
+.navbar{--nav-ease:cubic-bezier(.32,.72,.22,1);position:absolute;bottom:calc(20px + var(--sb));left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:4px;padding:7px;border-radius:99px;pointer-events:all;width:max-content;max-width:calc(100% - 24px);}
+.nav-thumb{position:absolute;top:7px;bottom:7px;left:7px;width:49px;border-radius:99px;z-index:0;background:linear-gradient(135deg, rgba(99,229,255,.22), rgba(99,229,255,.06));transition:left .55s var(--nav-ease), width .55s var(--nav-ease), background .4s linear;}
+.nav-thumb.tint-pink{background:linear-gradient(135deg, rgba(255,91,154,.22), rgba(255,91,154,.06));}
+.nav-thumb.tint-violet{background:linear-gradient(135deg, rgba(164,118,255,.22), rgba(164,118,255,.06));}
+.nav-btn{position:relative;z-index:1;flex:0 0 auto;display:flex;align-items:center;justify-content:center;height:45px;padding:0 15px;border-radius:99px;color:var(--muted);background:none;border:none;outline:none;font-family:var(--font-body);touch-action:manipulation;cursor:pointer;transition:color .5s var(--smooth), transform .12s var(--smooth);}
+.nav-btn:active{transform:scale(.9);}
+.nav-btn svg{width:19px;height:19px;stroke:currentColor;fill:none;flex-shrink:0;display:block;}
+.nav-btn .nav-avatar{width:19px;height:19px;}
+.nav-btn .label{max-width:0;min-width:0;width:0;overflow:hidden;opacity:0;white-space:nowrap;font-size:10px;font-weight:700;line-height:1;transition:max-width .55s var(--nav-ease), opacity .35s var(--smooth) .1s, margin .55s var(--nav-ease);}
+.nav-btn.active{color:var(--text);}
+.nav-btn.active .label{max-width:82px;width:auto;opacity:1;margin-left:6px;}
+.nav-btn.tint-cyan.active{background:linear-gradient(135deg, rgba(99,229,255,.22), rgba(99,229,255,.06));color:var(--cyan);}
+.nav-btn.tint-pink.active{background:linear-gradient(135deg, rgba(255,91,154,.22), rgba(255,91,154,.06));color:var(--pink);}
+.nav-btn.tint-violet.active{background:linear-gradient(135deg, rgba(164,118,255,.22), rgba(164,118,255,.06));color:var(--violet);}
+.nav-badge{position:absolute;top:-5px;right:-3px;min-width:18px;height:18px;padding:0 5px;border-radius:99px;background:var(--pink);color:#fff;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;line-height:1;}
+.nav-avatar{width:19px;height:19px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:9.5px;font-weight:800;color:#08080b;flex-shrink:0;}
+
+.toast-wrap{position:fixed;top:calc(14px + var(--st));left:50%;transform:translateX(-50%);width:calc(100% - 40px);max-width:440px;z-index:200;display:flex;flex-direction:column;gap:8px;pointer-events:none;}
+.toast{border-radius:16px;padding:12px 14px;display:flex;align-items:center;gap:10px;opacity:0;transform:translateY(-14px);transition:all .45s var(--smooth);}
+.toast.show{opacity:1;transform:translateY(0);}
+.toast .ic{width:26px;height:26px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:13px;background:rgba(255,255,255,.08);}
+.toast p{font-size:11.5px;font-weight:500;}
+
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:100;opacity:0;pointer-events:none;transition:opacity .4s var(--smooth);}
+.overlay.show{opacity:1;pointer-events:all;}
+.sheet{position:fixed;bottom:0;left:50%;transform:translateX(-50%) translateY(100%);width:100%;max-width:480px;background:var(--sheet-bg);backdrop-filter:blur(34px) saturate(160%);-webkit-backdrop-filter:blur(34px) saturate(160%);border-radius:30px 30px 0 0;padding:10px 20px calc(26px + var(--sb));z-index:101;transition:transform .5s var(--smooth);border:1px solid var(--glass-brd);border-bottom:none;max-height:88vh;overflow-y:auto;}
+.sheet.show{transform:translateX(-50%) translateY(0);}
+.sheet-handle{width:34px;height:4px;background:rgba(255,255,255,.15);border-radius:4px;margin:8px auto 16px;}
+.sheet-media{height:190px;border-radius:22px;position:relative;overflow:hidden;margin-bottom:16px;}
+.sheet-media img{width:100%;height:100%;object-fit:cover;}
+.sheet-close{position:absolute;top:12px;right:12px;width:30px;height:30px;border-radius:50%;background:rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;z-index:3;}
+.sheet-close svg{width:13px;height:13px;stroke:#fff;}
+.sheet h3{font-family:var(--font-head);font-weight:600;font-size:16px;margin-bottom:8px;line-height:1.3;}
+.sheet .desc{font-size:12.5px;color:var(--muted);line-height:1.6;margin-bottom:14px;}
+.sheet-price-row{margin-bottom:16px;}
+.sheet-price{font-family:var(--font-num);font-size:22px;font-weight:700;}
+
+.variant-block{margin-bottom:16px;}
+.variant-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:9px;font-weight:600;}
+.variant-row{display:flex;gap:8px;flex-wrap:wrap;}
+.flavor-chip{display:flex;align-items:center;gap:7px;padding:8px 13px 8px 8px;border-radius:14px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);font-size:12px;font-weight:600;color:var(--muted);transition:background .3s var(--smooth), border-color .3s var(--smooth), color .3s var(--smooth);}
+.flavor-chip .dot{width:16px;height:16px;border-radius:50%;flex-shrink:0;}
+.flavor-chip.active{background:rgba(99,229,255,.14);border-color:rgba(99,229,255,.4);color:var(--text);}
+.flavor-chip .check{width:14px;height:14px;stroke:var(--cyan);display:none;}
+.flavor-chip.active .check{display:block;}
+.strength-chip{padding:9px 15px;border-radius:13px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);font-size:12px;font-weight:600;color:var(--muted);transition:all .3s var(--smooth);}
+.strength-chip.active{background:var(--grad);color:#08080b;border-color:transparent;}
+
+/* multi-flavor selected list */
+.selected-flavors{margin-top:12px;display:flex;flex-direction:column;gap:8px;}
+.selflav-row{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.05);border-radius:14px;padding:9px 10px;}
+.selflav-row .dot{width:14px;height:14px;border-radius:50%;flex-shrink:0;}
+.selflav-row .name{flex:1;font-size:12px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.selflav-row .rm{width:24px;height:24px;border-radius:8px;background:rgba(255,91,122,.12);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.selflav-row .rm svg{width:10px;height:10px;stroke:var(--pink);}
+.multi-hint{font-size:10.5px;color:var(--muted2);margin-top:8px;}
+
+.sheet-bottom-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:6px;}
+.sheet-buy{flex:1;background:var(--grad);color:#08080b;font-weight:700;font-size:13.5px;padding:14px 18px;border-radius:16px;display:flex;align-items:center;justify-content:center;gap:8px;}
+
+.success-overlay{position:fixed;inset:0;background:rgba(4,4,6,.92);z-index:300;display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .4s var(--smooth);padding:0 30px;}
+.success-overlay.show{opacity:1;pointer-events:all;}
+.success-icon{width:88px;height:88px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;margin-bottom:24px;}
+.success-overlay.show .success-icon{animation:pop .5s var(--ease);}
+@keyframes pop{0%{transform:scale(0);}70%{transform:scale(1.1);}100%{transform:scale(1);}}
+.success-icon svg{width:36px;height:36px;stroke:#08080b;stroke-width:3;}
+.success-overlay h2{font-family:var(--font-head);font-weight:600;font-size:17px;margin-bottom:8px;text-align:center;color:#f2f3f7;}
+.success-overlay p{font-size:12.5px;color:#93939f;text-align:center;max-width:250px;margin-bottom:26px;}
+.success-btn{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);padding:13px 30px;border-radius:18px;font-size:12.5px;font-weight:600;color:#f2f3f7;}
+</style>
+</head>
+<body>
+
+<div class="age-gate" id="ageGate">
+  <div class="age-gate-inner glass">
+    <div class="age-icon">🔞</div>
+    <h2>Подтверди возраст</h2>
+    <p>Cloud Lab продаёт никотинсодержащую продукцию. Продажа лицам младше 18 лет строго запрещена.</p>
+    <div class="age-btn-row">
+      <button class="age-btn no" id="ageNo">Мне нет 18</button>
+      <button class="age-btn yes" id="ageYes">Мне есть 18</button>
+    </div>
+  </div>
+</div>
+<div class="age-blocked" id="ageBlocked">
+  <div style="font-size:40px;">🚫</div>
+  <h2>Доступ ограничен</h2>
+  <p>Извините, этот магазин доступен только пользователям старше 18 лет.</p>
+</div>
+
+<div class="app" id="app">
+  <div class="bg-glow"><span></span><span></span></div>
+
+  <div class="toast-wrap" id="toastWrap"></div>
+
+  <div class="screens">
+
+    <!-- ============ HOME ============ -->
+    <section class="screen active" id="screen-home">
+      <div class="topbar">
+        <div class="top-logo">
+          <b id="brandName">CLOUD LAB</b>
+        </div>
+      </div>
+
+      <div class="hello-block">
+        <h1>Привет 👋</h1>
+        <span>Что будем заказывать сегодня?</span>
+      </div>
+
+      <div class="banner-wrap">
+        <div class="banner-frame glass mask-fix">
+          <div class="banner-scroll" id="bannerScroll">
+            <div class="banner-slide">
+              <img src="banner1.jpg" alt="" onerror="this.style.display='none'">
+              <div class="banner-scrim"></div>
+              <div class="banner-text"><span class="banner-tag">NEW DROP</span><h3>Новая линейка Cloud Salt уже в магазине</h3></div>
+            </div>
+            <div class="banner-slide">
+              <img src="banner2.jpg" alt="" onerror="this.style.display='none'">
+              <div class="banner-scrim"></div>
+              <div class="banner-text"><span class="banner-tag">SALE</span><h3>Скидка 15% на все одноразки</h3></div>
+            </div>
+            <div class="banner-slide">
+              <img src="banner3.jpg" alt="" onerror="this.style.display='none'">
+              <div class="banner-scrim"></div>
+              <div class="banner-text"><span class="banner-tag">ДОСТАВКА</span><h3>Бесплатно при заказе от 2000 ₽</h3></div>
+            </div>
+          </div>
+          <div class="dots-v" id="bannerDots"></div>
+        </div>
+      </div>
+
+      <div class="quick-cats" id="quickCats"></div>
+
+      <div class="section" style="padding-top:22px;">
+        <div class="section-head"><h2>🔥 Популярное</h2></div>
+        <div class="grid" id="homeGrid"></div>
+      </div>
+    </section>
+
+    <!-- ============ CATALOG ============ -->
+    <section class="screen" id="screen-catalog">
+      <div class="topbar">
+        <b style="font-family:var(--font-head);font-weight:600;font-size:15px;">Каталог</b>
+      </div>
+      <div class="search-box glass" id="catSearchBox" style="margin-top:14px;">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+        <input type="text" id="catSearch" placeholder="Поиск по каталогу...">
+      </div>
+
+      <div class="segment-outer">
+        <div class="segment-scroll glass mask-fix" id="catSegment">
+          <div class="segment-thumb" id="segThumb"></div>
+        </div>
+      </div>
+
+      <div class="section" style="padding-top:12px;">
+        <div class="grid" id="catalogGrid"></div>
+      </div>
+    </section>
+
+    <!-- ============ CART ============ -->
+    <section class="screen" id="screen-cart">
+      <div class="topbar"><b style="font-family:var(--font-head);font-weight:600;font-size:15px;">Корзина</b></div>
+      <div class="section" id="cartSection"></div>
+    </section>
+
+    <!-- ============ PROFILE ============ -->
+    <section class="screen" id="screen-profile">
+      <div class="topbar"><b style="font-family:var(--font-head);font-weight:600;font-size:15px;">Профиль</b></div>
+      <div class="profile-head">
+        <div class="avatar-big">🧑‍🚀</div>
+        <h2>Гость Cloud Lab</h2>
+        <p id="profileTgId">ID 048213</p>
+      </div>
+
+      <div class="section" style="padding-top:14px;">
+        <div class="points-card glass" style="margin:0;">
+          <div class="points-icon">💎</div>
+          <div class="points-text"><p>Баланс бонусов · 1000 = 100 ₽</p><b id="pointsValProfile">0</b></div>
+        </div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-box glass"><b id="statOrders">0</b><span>заказов</span></div>
+        <div class="stat-box glass"><b id="statItems">0</b><span>в корзине</span></div>
+      </div>
+
+      <div class="menu-list">
+        <div class="menu-item glass" id="openRefBtn"><div class="ic">🎁</div><p>Пригласи друга</p><svg class="chev" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg></div>
+        <div class="menu-item glass" id="themeItem"><div class="ic">🌗</div><p>Тёмная тема</p><div class="theme-switch on" id="themeSwitch"><i></i></div></div>
+      </div>
+    </section>
+
+    <!-- ============ ADMIN ============ -->
+    <section class="screen" id="screen-admin">
+      <div class="topbar">
+        <div style="width:38px;"></div>
+        <b style="font-family:var(--font-head);font-weight:600;font-size:14px;letter-spacing:1px;">🛡 Админ-панель</b>
+        <div class="top-icons">
+          <div class="gbtn glass" id="adminExitBtn"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></div>
+        </div>
+      </div>
+      <div class="admin-tabs" id="adminTabs"></div>
+      <div class="admin-body" id="adminBody"></div>
+    </section>
+
+    <!-- ============ REFERRAL ============ -->
+    <section class="screen" id="screen-referral">
+      <div class="topbar">
+        <div style="width:38px;"></div>
+        <b style="font-family:var(--font-head);font-weight:600;font-size:15px;">Пригласи друга</b>
+        <div style="width:38px;"></div>
+      </div>
+      <div class="ref-hero glass">
+        <div class="emoji">🎁</div>
+        <h2>Дари 200 баллов друзьям</h2>
+        <p>Друг получит <b>200 баллов (= 20 ₽)</b> после первого заказа, а ты — столько же за каждого приглашённого</p>
+        <div class="ref-code-box">
+          <div><span>Твой код</span><br><b id="refCodeVal">CLOUD-4821</b></div>
+          <div class="gbtn" id="copyRefBtn" style="background:rgba(99,229,255,.12);width:36px;height:36px;"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg></div>
+        </div>
+        <div class="ref-share-btn" id="shareRefBtn">Поделиться в Telegram
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </div>
+      </div>
+      <div class="ref-stats">
+        <div class="stat-box glass"><b id="refInvited">0</b><span>приглашено</span></div>
+        <div class="stat-box glass"><b id="refEarned">0</b><span>заработано баллов</span></div>
+      </div>
+      <div class="section" style="padding-top:16px;">
+        <p class="note" style="text-align:center;">💎 1000 баллов = 100 ₽ · баллы можно списать при оформлении заказа</p>
+      </div>
+    </section>
+
+  </div>
+</div>
+
+<!-- ===== NAV STAGE ===== -->
+<div class="nav-stage">
+  <div class="navbar glass" id="navbar">
+    <div class="nav-thumb" id="navThumb"></div>
+    <button class="nav-btn tint-cyan active" data-screen="home">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5 12 3l9 6.5V21a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/></svg>
+      <span class="label">Главная</span>
+    </button>
+    <button class="nav-btn tint-cyan" data-screen="catalog">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+      <span class="label">Каталог</span>
+    </button>
+    <button class="nav-btn tint-pink" data-screen="cart">
+      <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M2.5 3h2l2.5 12.5h11L20.5 7H6"/></svg>
+      <span class="label">Корзина</span>
+      <div class="nav-badge" id="navCartCount" style="display:none;">0</div>
+    </button>
+    <button class="nav-btn tint-violet" data-screen="profile">
+      <div class="nav-avatar">C</div>
+      <span class="label">Профиль</span>
+    </button>
+  </div>
+</div>
+
+<!-- PRODUCT SHEET -->
+<div class="overlay" id="overlay"></div>
+<div class="sheet" id="sheet">
+  <div class="sheet-handle"></div>
+  <div class="sheet-media" id="sheetMedia">
+    <div class="sheet-close" id="sheetCloseBtn"><svg viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></div>
+  </div>
+  <div id="sheetBadge" class="pcard-badge" style="position:static;display:none;margin-bottom:10px;"></div>
+  <h3 id="sheetTitle"></h3>
+  <p class="desc" id="sheetDesc"></p>
+  <div class="sheet-price-row"><div class="sheet-price" id="sheetPrice"></div></div>
+  <div id="sheetVariants"></div>
+  <div class="sheet-bottom-row" id="sheetBottomRow">
+    <div class="qty-mini" id="singleQtyBlock">
+      <button id="sheetQtyMinus"><svg viewBox="0 0 24 24"><path d="M5 12h14"/></svg></button>
+      <span id="sheetQtyVal">1</span>
+      <button id="sheetQtyPlus"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
+    </div>
+    <div class="sheet-buy" id="sheetBuy">В корзину</div>
+  </div>
+</div>
+
+<!-- CHECKOUT SHEET -->
+<div class="overlay" id="chkOverlay"></div>
+<div class="sheet" id="chkSheet">
+  <div class="sheet-handle"></div>
+  <h3>Оформление заказа</h3>
+  <p class="desc" id="chkSummary"></p>
+  <div class="chk-field">
+    <div class="chk-label">1 · Как можно обращаться</div>
+    <input class="chk-input" id="chkName" type="text" placeholder="Имя или ник" autocomplete="off">
+  </div>
+  <div class="chk-field">
+    <div class="chk-label">2 · Номер телефона</div>
+    <input class="chk-input" id="chkPhone" type="tel" placeholder="+7 (900) 000-00-00" autocomplete="off" inputmode="tel">
+  </div>
+  <div class="chk-field">
+    <div class="chk-label">3 · Личный Telegram</div>
+    <input class="chk-input" id="chkTg" type="text" placeholder="@username" autocomplete="off">
+  </div>
+  <div class="chk-field">
+    <div class="chk-label">4 · Способ получения</div>
+    <div class="method-row">
+      <div class="method-chip active" data-m="delivery">🛵 Доставка</div>
+      <div class="method-chip" data-m="pickup">🏃 Самовывоз</div>
+    </div>
+  </div>
+  <div class="chk-field" id="districtField" style="display:none;">
+    <div class="chk-label">5 · Район доставки</div>
+    <div class="district-row" id="districtRow"></div>
+  </div>
+  <div class="chk-field" id="addrField">
+    <div class="chk-label">6 · Адрес доставки <em>· необязательно</em></div>
+    <input class="chk-input" id="chkAddr" type="text" placeholder="Улица, дом, квартира" autocomplete="off">
+    <div class="map-open-btn" id="geoAddrBtn">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 22s7-7.5 7-12a7 7 0 1 0-14 0c0 4.5 7 12 7 12z"/><circle cx="12" cy="10" r="2.5"/></svg>
+      📍 Определить местоположение
+    </div>
+  </div>
+  <div class="chk-field">
+    <div class="chk-label">7 · Оплата</div>
+    <div class="method-row" id="payRow">
+      <div class="method-chip" data-pay="crypto">₿ Крипта</div>
+      <div class="method-chip" data-pay="transfer">🏦 Перевод</div>
+      <div class="method-chip" data-pay="cash">💵 Наличные</div>
+      <div class="method-chip" data-pay="points" id="payPointsChip" style="display:none;">💰 Баллы</div>
+    </div>
+    <p class="note" id="payFeeNote" style="display:none;margin-top:8px;">🏦 Комиссия: 75 ₽ при сумме до 1000 ₽, от 1000 ₽ до 10 000 ₽ — 25% от суммы заказа</p>
+    <p class="note" id="payPointsNote" style="display:none;margin-top:8px;">Твой баланс: <b id="payPointsBal"></b> · курс 1000 баллов = 100 ₽</p>
+  </div>
+  <div class="chk-field">
+    <div class="chk-label">8 · Комментарий / уточнение</div>
+    <textarea class="chk-input" id="chkComment" placeholder="Пожелания к заказу, домофон, время…"></textarea>
+  </div>
+  <div class="sum-total glass" style="padding:14px 16px;border-radius:18px;margin:4px 0 14px;"><span>Итого к оплате</span><b id="chkTotal">0</b></div>
+  <div class="chk-submit" id="submitOrderBtn">Подтвердить заказ</div>
+</div>
+
+<!-- ADMIN PIN (полноэкранный) -->
+<div class="pin-overlay" id="pinOverlay">
+  <div class="pin-top">
+    <div class="gbtn glass" id="pinCloseBtn"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg></div>
+  </div>
+  <div class="pin-mid">
+    <div class="pin-icon">🔐</div>
+    <h4>Введите пароль</h4>
+    <p>Доступ только для администратора</p>
+    <div class="pin-dots" id="pinDots"><i></i><i></i><i></i><i></i></div>
+    <div class="pin-err" id="pinErr"></div>
+  </div>
+  <div class="pin-pad" id="pinPad">
+    <button class="pin-key" data-k="1">1</button>
+    <button class="pin-key" data-k="2">2</button>
+    <button class="pin-key" data-k="3">3</button>
+    <button class="pin-key" data-k="4">4</button>
+    <button class="pin-key" data-k="5">5</button>
+    <button class="pin-key" data-k="6">6</button>
+    <button class="pin-key" data-k="7">7</button>
+    <button class="pin-key" data-k="8">8</button>
+    <button class="pin-key" data-k="9">9</button>
+    <button class="pin-key ghost"></button>
+    <button class="pin-key" data-k="0">0</button>
+    <button class="pin-key" data-k="back">⌫</button>
+  </div>
+</div>
+
+<!-- SUCCESS -->
+<div class="success-overlay" id="successOverlay">
+  <div class="success-icon"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div>
+  <h2>Заказ отправлен!</h2>
+  <p>Мы получили твой заказ и свяжемся с тобой в Telegram для подтверждения.</p>
+  <div class="success-btn" id="closeSuccess">Отлично</div>
+</div>
+
+<script>
+/* ╔══════════════════════════════════════════════════════════════════╗
+   ║   ⚙️  НАСТРОЙКИ — ЗАПОЛНИ ЭТО, ОСТАЛЬНОЕ НЕ ТРОГАЙ              ║
+   ╠══════════════════════════════════════════════════════════════════╣
+   ║  1. БАЗА ДАННЫХ (JSONBin):                                       ║
+   ║     • зарегистрируйся на https://jsonbin.io (бесплатно)           ║
+   ║     • Create Bin — содержимое {}  → скопируй Bin ID               ║
+   ║     • раздел API Keys → скопируй X-Master-Key                     ║
+   ║  2. УВЕДОМЛЕНИЯ В TELEGRAM:                                      ║
+   ║     • создай бота у @BotFather (/newbot) → скопируй токен         ║
+   ║     • узнай свой ID (@userinfobot) или впишешь потом              ║
+   ║       в админ-панели → Настройки                                  ║
+   ║  Всё можно оставить пустым — приложение работает и без этого      ║
+   ║  (данные будут храниться только на устройстве).                   ║
+   ╚══════════════════════════════════════════════════════════════════╝ */
+const CONFIG = {
+  JSONBIN_BIN_ID: '',   // ← Bin ID с jsonbin.io
+  JSONBIN_KEY:    '',   // ← X-Master-Key с jsonbin.io
+  BOT_TOKEN:      '',   // ← токен бота от @BotFather (уведомления)
+  ADMIN_CHAT_ID:  '',   // ← Telegram ID администратора (или в админке)
+  BOT_USERNAME:   ''    // ← username бота без @ (для реф-ссылок)
+};
+
+try{ const tg = window.Telegram.WebApp; tg.ready(); tg.expand(); }catch(e){}
+function haptic(t){ try{ Telegram.WebApp.HapticFeedback.impactOccurred(t||'light'); }catch(e){} }
+function hapticNotif(t){ try{ Telegram.WebApp.HapticFeedback.notificationOccurred(t||'success'); }catch(e){} }
+
+/* ===================== THEME (по умолчанию тёмная, переключение в профиле) ===================== */
+function applyTheme(scheme){
+  document.documentElement.setAttribute('data-theme', scheme);
+  const sw = document.getElementById('themeSwitch');
+  if(sw) sw.classList.toggle('on', scheme==='dark');
+}
+let currentScheme = localStorage.getItem('cloudlab_theme') || 'dark';
+applyTheme(currentScheme);
+document.getElementById('themeSwitch').addEventListener('click', ()=>{
+  const next = document.documentElement.getAttribute('data-theme')==='dark' ? 'light' : 'dark';
+  localStorage.setItem('cloudlab_theme', next);
+  applyTheme(next);
+  haptic('light');
+});
+
+/* ===================== AGE GATE ===================== */
+const ageGate = document.getElementById('ageGate');
+const ageBlocked = document.getElementById('ageBlocked');
+if(localStorage.getItem('cloudlab_age_ok') === '1'){
+  ageGate.style.display='none';
+} else {
+  document.getElementById('ageYes').addEventListener('click', ()=>{
+    localStorage.setItem('cloudlab_age_ok','1');
+    ageGate.style.display='none';
+  });
+  document.getElementById('ageNo').addEventListener('click', ()=>{
+    ageGate.style.display='none';
+    ageBlocked.style.display='flex';
+  });
+}
+
+/* ===================== DATA LAYER ===================== */
+const LS = {
+  get(k, d){ try{ const v = localStorage.getItem(k); return v===null ? d : JSON.parse(v); }catch(e){ return d; } },
+  set(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
+};
+
+/* JSONBin.io — облачная база. Bin ID и ключ задаются в админ-панели (вкладка JSONBin).
+   Пока не настроено — всё хранится локально в localStorage. */
+const DB = {
+  get binId(){ return String(CONFIG.JSONBIN_BIN_ID || localStorage.getItem('cl_bin_id') || '').trim(); },
+  get key(){ return String(CONFIG.JSONBIN_KEY || localStorage.getItem('cl_bin_key') || '').trim(); },
+  get ready(){ return !!(this.binId && this.key); },
+  read(){
+    return fetch('https://api.jsonbin.io/v3/b/' + this.binId + '/latest', { headers: { 'X-Master-Key': this.key } })
+      .then(r => { if(!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(j => (j && typeof j.record !== 'undefined') ? j.record : j);
+  },
+  write(data){
+    return fetch('https://api.jsonbin.io/v3/b/' + this.binId, {
+      method: 'PUT',
+      headers: { 'X-Master-Key': this.key, 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    }).then(r => { if(!r.ok) throw new Error('HTTP ' + r.status); return r.json(); });
+  }
+};
+
+const DEFAULT_CATS = [
+  {key:'liquid', label:'Жидкости', emoji:'🧴', color:'#63e5ff'},
+  {key:'disposable', label:'Одноразки', emoji:'💨', color:'#ff5b9a'},
+  {key:'device', label:'Устройства', emoji:'🔋', color:'#a476ff'},
+  {key:'parts', label:'Напитки', emoji:'🥤', color:'#ffcf7d'}
+];
+const CAT_PALETTE = ['#63e5ff','#ff5b9a','#a476ff','#ffcf7d','#7ef29d','#ff9d5c','#7d8bff'];
+function ensureCatColors(){
+  let changed = false;
+  categories.forEach((c,i)=>{ if(!c.color){ c.color = CAT_PALETTE[i % CAT_PALETTE.length]; changed = true; } });
+  if(changed) LS.set('cl_cats', categories);
+}
+/* миграция: старая категория «Запчасти» → «Напитки» */
+function migrateCats(){
+  let changed = false;
+  categories.forEach(c=>{
+    if(c.key==='parts' && c.label==='Запчасти'){ c.label='Напитки'; c.emoji='🥤'; changed=true; }
+  });
+  if(changed) LS.set('cl_cats', categories);
+  ensureCatColors();
+}
+const DEFAULT_BANNERS = [
+  {tag:'NEW DROP', title:'Новая линейка Cloud Salt уже в магазине', img:'banner1.jpg', on:true},
+  {tag:'SALE', title:'Скидка 15% на все одноразки', img:'banner2.jpg', on:true},
+  {tag:'ДОСТАВКА', title:'Бесплатно при заказе от 2000 ₽', img:'banner3.jpg', on:true}
+];
+const DEFAULT_SETTINGS = { shopName:'CLOUD LAB', deliveryPrice:200, freeFrom:2000, supportLink:'https://t.me/' };
+const DEFAULT_DISTRICTS = [
+  {id:'vyya',        name:'Выя',           price:50},
+  {id:'krasny',      name:'Красный камень', price:50},
+  {id:'center',      name:'Центр',         price:50},
+  {id:'prirech',     name:'Приречный',     price:50},
+  {id:'ggm',         name:'ГГМ',           price:100},
+  {id:'kirpich',     name:'Кирпичный',     price:100},
+  {id:'vmz',         name:'ВМЗ',           price:100},
+  {id:'tagilstroy',  name:'Тагилстрой',    price:150},
+  {id:'vagonka',     name:'Вагонка',       price:200},
+  {id:'staratel',    name:'Старатель',     price:200}
+];
+/* бесплатная доставка по Вые / Красному камню / Центру от 2000 ₽ */
+const FREE_DELIVERY_DISTRICTS = ['vyya','krasny','center'];
+const FREE_DELIVERY_FROM = 2000;
+function districtPrice(d){
+  if(!d) return 0;
+  if(FREE_DELIVERY_DISTRICTS.includes(d.id) && cartTotals().subtotal >= FREE_DELIVERY_FROM) return 0;
+  return Number(d.price) || 0;
+}
+function migrateDistricts(){
+  let changed = false;
+  DEFAULT_DISTRICTS.forEach(dd=>{
+    if(!districts.some(x=>x.id===dd.id)){ districts.push(Object.assign({},dd)); changed = true; }
+  });
+  if(changed) LS.set('cl_districts', districts);
+}
+let districts = LS.get('cl_districts', null);
+if(!Array.isArray(districts) || !districts.length) districts = DEFAULT_DISTRICTS.map(d=>Object.assign({},d));
+
+let categories = LS.get('cl_cats', null);
+if(!Array.isArray(categories) || !categories.length) categories = DEFAULT_CATS.map(c=>Object.assign({},c));
+let banners = LS.get('cl_banners', null);
+if(!Array.isArray(banners) || !banners.length) banners = DEFAULT_BANNERS.map(b=>Object.assign({},b));
+let settings = Object.assign({}, DEFAULT_SETTINGS, LS.get('cl_settings', {}));
+let localOrders = LS.get('cl_orders', []);
+let adminLogs = LS.get('cl_logs', []);
+
+function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+function getTgUser(){
+  try{
+    const u = Telegram.WebApp.initDataUnsafe && Telegram.WebApp.initDataUnsafe.user;
+    if(u) return { id:u.id, name:u.first_name||'', username:u.username||'' };
+  }catch(e){}
+  return null;
+}
+function logAction(text){
+  adminLogs.unshift({ t: Date.now(), text });
+  if(adminLogs.length > 120) adminLogs.length = 120;
+  LS.set('cl_logs', adminLogs);
+}
+
+/* ===================== УВЕДОМЛЕНИЯ (Telegram Bot API) =====================
+   Новый заказ → сообщение админу (ID из админки/конфига).
+   Смена статуса → сообщение клиенту (по его Telegram ID из заказа).
+   Бот может написать пользователю, только если тот хоть раз открывал
+   бота (нажал Start) — иначе Telegram блокирует отправку. */
+const STATUS_EMOJI = {new:'🆕', confirmed:'✅', paid:'💰', delivering:'🛵', done:'🎉', canceled:'❌'};
+function botToken(){ return String(settings.botToken || CONFIG.BOT_TOKEN || '').trim(); }
+function adminChatId(){ return String(settings.adminChatId || CONFIG.ADMIN_CHAT_ID || '').trim(); }
+async function tgSendMessage(chatId, text){
+  const token = botToken();
+  if(!token || !chatId) return {ok:false, reason:'не задан токен или ID'};
+  try{
+    const r = await fetch('https://api.telegram.org/bot' + token + '/sendMessage', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ chat_id: chatId, text, parse_mode:'HTML', disable_web_page_preview:true })
+    });
+    if(!r.ok){
+      let desc=''; try{ desc = (await r.json()).description || ''; }catch(e){}
+      return {ok:false, reason: desc || ('HTTP ' + r.status)};
+    }
+    return {ok:true};
+  }catch(e){ return {ok:false, reason:'нет соединения'}; }
+}
+function orderTextAdmin(o){
+  const items = (o.items||[]).map(i=>`${i.qty}× ${esc(i.title)}${i.variant?' · '+esc(i.variant):''}`).join('\n');
+  return `🛒 <b>${esc(settings.shopName)} — новый заказ</b>
+№ <code>${o.id}</code>
+👤 ${esc(o.customer.name)} · 📱 ${esc(o.customer.phone)} · ✈️ ${esc(o.customer.telegram)}
+${o.method==='pickup' ? '🏃 Самовывоз' : '🛵 Доставка: ' + esc(o.address||'— не указан —') + (o.district ? ' · район: ' + esc(o.district) : '')}
+💳 Оплата: ${esc(o.payment||'—')}${o.transferFee ? '\n➕ Комиссия оплаты: ' + fmt(o.transferFee) : ''}
+${(o.lat&&o.lon) ? `📍 <a href="https://www.openstreetmap.org/?mlat=${o.lat}&mlon=${o.lon}#map=17/${o.lat}/${o.lon}">точка на карте</a>` : ''}
+${o.pointsUsed ? '💰 Баллы: −' + o.pointsUsed + ' (скидка ' + fmt(o.pointsDiscount||0) + ')\n' : ''}${o.comment ? '💬 ' + esc(o.comment) : ''}
+———
+${items}
+———
+Товары: ${fmt(o.subtotal)}
+Доставка: ${o.delivery===0 ? 'бесплатно' : 'от ' + fmt(o.delivery)}
+<b>Итого: ${fmt(o.total)}</b>`;
+}
+function orderTextClient(o, status){
+  const st = ORDER_STATUS[status] || {label:status};
+  return `📦 <b>${esc(settings.shopName)} · заказ ${o.id}</b>
+
+Статус: ${STATUS_EMOJI[status]||'•'} <b>${st.label}</b>
+Сумма: ${fmt(o.total)}
+
+Спасибо, что выбираешь нас! 💜`;
+}
+function mergeOrders(a, b){
+  const map = {};
+  (Array.isArray(a)?a:[]).forEach(o=>{ if(o && o.id) map[o.id]=o; });
+  (Array.isArray(b)?b:[]).forEach(o=>{ if(o && o.id) map[o.id]=o; });
+  return Object.values(map).sort((x,y)=> new Date(y.createdAt||0) - new Date(x.createdAt||0)).slice(0,400);
+}
+function mergeById(a, b){
+  const map = {};
+  (Array.isArray(a)?a:[]).forEach(x=>{ if(x && x.id) map[x.id]=x; });
+  (Array.isArray(b)?b:[]).forEach(x=>{ if(x && x.id) map[x.id]=x; });
+  return Object.values(map);
+}
+function mergeLogs(a, b){
+  const seen = {};
+  (Array.isArray(a)?a:[]).concat(Array.isArray(b)?b:[]).forEach(l=>{
+    if(l && l.t){ seen[l.t + '|' + (l.text||'')] = l; }
+  });
+  return Object.values(seen).sort((x,y)=> y.t - x.t).slice(0,200);
+}
+let _syncTimer = null;
+function syncCloud(immediate){
+  if(!DB.ready) return;
+  const run = async ()=>{
+    try{
+      let doc = {};
+      try{ doc = await DB.read(); if(!doc || typeof doc!=='object' || Array.isArray(doc)) doc={}; }catch(e){ doc={}; }
+      doc.orders = mergeOrders(doc.orders, localOrders);
+      doc.logs = mergeLogs(doc.logs, adminLogs);
+      doc.products = products; doc.categories = categories; doc.banners = banners; doc.settings = settings; doc.districts = districts;
+      const refOutbox = LS.get('cl_ref_outbox', []);
+      doc.referrals = mergeById(doc.referrals || [], refOutbox).slice(-500);
+      await DB.write(doc);
+      if(refOutbox.length){ LS.set('cl_ref_outbox', []); LS.set('cl_ref_cache', doc.referrals); }
+    }catch(e){ console.warn('JSONBin sync failed:', e); }
+  };
+  if(immediate) return run();
+  clearTimeout(_syncTimer); _syncTimer = setTimeout(run, 1200);
+}
+function applyCloudDoc(doc, silent){
+  let changed = false;
+  if(Array.isArray(doc.orders) && doc.orders.length){
+    localOrders = mergeOrders(localOrders, doc.orders); LS.set('cl_orders', localOrders); changed = true;
+  }
+  if(Array.isArray(doc.products) && doc.products.length){
+    products = stripStrength(doc.products); LS.set('cl_products', products); changed = true;
+  }
+  if(Array.isArray(doc.categories) && doc.categories.length){
+    categories = doc.categories; migrateCats(); ensureCatColors(); LS.set('cl_cats', categories); changed = true;
+  }
+  if(Array.isArray(doc.banners) && doc.banners.length){
+    banners = doc.banners; LS.set('cl_banners', banners); changed = true;
+  }
+  if(doc.settings && typeof doc.settings==='object'){
+    settings = Object.assign({}, DEFAULT_SETTINGS, doc.settings); LS.set('cl_settings', settings); changed = true;
+  }
+  if(Array.isArray(doc.logs) && doc.logs.length){
+    adminLogs = mergeLogs(doc.logs, adminLogs); LS.set('cl_logs', adminLogs); changed = true;
+  }
+  if(Array.isArray(doc.districts) && doc.districts.length){
+    districts = doc.districts; migrateDistricts(); LS.set('cl_districts', districts); changed = true;
+  }
+  if(Array.isArray(doc.referrals)){
+    LS.set('cl_ref_cache', doc.referrals);
+    creditNewReferrals(doc.referrals);
+  }
+  if(changed && !silent){
+    renderQuickCats(); renderSegments(); renderBanners(); renderHomeGrid();
+    renderCatalogGrid(currentCat, searchVal); updateProfile();
+    document.title = settings.shopName;
+    const bn = document.getElementById('brandName'); if(bn) bn.textContent = settings.shopName;
+  }
+  return changed;
+}
+
+/* ===================== PRODUCTS DATA ===================== */
+function swatchGroup(label, options, multi){ return {type:'swatch', label, options, multi: !!multi}; }
+function chipGroup(label, options){ return {type:'chip', label, options}; }
+
+const DEFAULT_PRODUCTS = [
+  {id:1, cat:'liquid', img:'images/p1.jpg', ph:'ph1', title:'Cloud Salt Line 30ml',
+    desc:'Линейка солевых жидкостей с насыщенным вкусом. Можно выбрать сразу несколько вкусов в одном заказе.', price:450,
+    groups:[
+      swatchGroup('Вкус (можно выбрать несколько)', [
+        {name:'Blue Razz', color:'#3b82f6'},{name:'Watermelon', color:'#22c55e'},
+        {name:'Mango', color:'#f59e0b'},{name:'Mint', color:'#06b6d4'},{name:'Peach Ice', color:'#f472b6'}
+      ], true)
+    ]},
+  {id:2, cat:'disposable', img:'images/p2.jpg', ph:'ph2', title:'Cloud Bar 600',
+    desc:'До 600 затяжек. Можно выбрать несколько вкусов в одном заказе.', price:990,
+    groups:[
+      swatchGroup('Вкус (можно выбрать несколько)', [
+        {name:'Peach Ice', color:'#f472b6'},{name:'Grape', color:'#a855f7'},
+        {name:'Cola', color:'#92400e'},{name:'Mint', color:'#06b6d4'}
+      ], true)
+    ]},
+  {id:3, cat:'device', img:'images/p3.jpg', ph:'ph3', title:'Cloud XROS 3 Pod Kit',
+    desc:'Компактное устройство, автозатяжка, аккумулятор 1000mAh.', price:2490,
+    groups:[
+      swatchGroup('Цвет', [
+        {name:'Space Black', color:'#141414'},{name:'Ocean Blue', color:'#2563eb'},
+        {name:'Neon Purple', color:'#9333ea'},{name:'Sunset Gold', color:'#eab308'}
+      ], false)
+    ]},
+  {id:4, cat:'device', img:'images/p4.jpg', ph:'ph4', title:'Cloud Box Mod 80W',
+    desc:'Мощное устройство с регулировкой мощности и экраном OLED.', price:3990,
+    groups:[
+      swatchGroup('Цвет', [
+        {name:'Matte Black', color:'#1f1f1f'},{name:'Silver', color:'#c7c9cc'},{name:'Crimson', color:'#dc2626'}
+      ], false)
+    ]},
+  {id:5, cat:'parts', img:'images/p5.jpg', ph:'ph5', title:'GTX Mesh Испарители',
+    desc:'Комплект из 3 штук. Совместимы с линейкой GTX Pod.', price:350,
+    groups:[ chipGroup('Сопротивление', ['0.4Ω','0.6Ω','0.8Ω','1.2Ω']) ]},
+  {id:6, cat:'liquid', img:'images/p6.jpg', ph:'ph6', title:'Cloud Salt Fresh Line 30ml',
+    desc:'Свежая фруктовая линейка. Доступен мультивыбор вкусов.', price:390,
+    groups:[
+      swatchGroup('Вкус (можно выбрать несколько)', [
+        {name:'Mango Ice', color:'#f59e0b'},{name:'Lychee', color:'#f43f5e'},{name:'Green Apple', color:'#84cc16'}
+      ], true)
+    ]},
+  {id:7, cat:'disposable', img:'images/p7.jpg', ph:'ph7', title:'Cloud Bar Mini 300',
+    desc:'300 затяжек — идеально для новичков.', price:590,
+    groups:[
+      swatchGroup('Вкус (можно выбрать несколько)', [
+        {name:'Mint', color:'#06b6d4'},{name:'Berry', color:'#ec4899'},{name:'Lemon', color:'#facc15'}
+      ], true)
+    ]}
+];
+
+/* ===================== STATE ===================== */
+function stripStrength(list){
+  (Array.isArray(list)?list:[]).forEach(p=>{
+    if(Array.isArray(p.groups)) p.groups = p.groups.filter(g=>g && g.label && !String(g.label).toLowerCase().includes('крепост'));
+  });
+  return list;
+}
+let products = LS.get('cl_products', null);
+if(!Array.isArray(products) || !products.length) products = DEFAULT_PRODUCTS.map(p=>Object.assign({}, p));
+stripStrength(products);
+
+const state = { cart:{} };
+/* ===== БАЛЛЫ И РЕФ-СИСТЕМА: 1000 баллов = 100 ₽ ===== */
+const POINTS_PER_RUB = 10;
+const REF_BONUS = 200;
+function myRefCode(){
+  let code = localStorage.getItem('cl_ref_code');
+  if(!code){
+    const u = getTgUser();
+    code = 'CL-' + (u && u.id ? u.id.toString(36).toUpperCase() : Math.random().toString(36).slice(2,6).toUpperCase());
+    localStorage.setItem('cl_ref_code', code);
+  }
+  return code;
+}
+function getPoints(){ return parseInt(localStorage.getItem('cl_points')||'0',10) || 0; }
+function setPoints(v){ localStorage.setItem('cl_points', Math.max(0, Math.round(v))); updatePointsUI(); }
+function updatePointsUI(){
+  const el = document.getElementById('pointsValProfile'); if(el) el.textContent = getPoints();
+}
+function invitedByCode(){
+  let v = localStorage.getItem('cl_invited_by');
+  if(v !== null) return v || null;
+  v = '';
+  try{
+    const sp = Telegram.WebApp.initDataUnsafe && Telegram.WebApp.initDataUnsafe.start_param;
+    if(sp){
+      const m = String(sp).match(/([A-Za-z0-9-]{4,})/);
+      if(m) v = m[1].toUpperCase();
+    }
+  }catch(e){}
+  if(v === myRefCode()) v = '';
+  localStorage.setItem('cl_invited_by', v);
+  return v || null;
+}
+function creditNewReferrals(list){
+  const mine = (Array.isArray(list)?list:[]).filter(r=>r && r.code === myRefCode());
+  const processed = LS.get('cl_ref_processed', []);
+  let earned = 0;
+  mine.forEach(r=>{ if(!processed.includes(r.id)){ earned += REF_BONUS; processed.push(r.id); } });
+  if(earned){
+    LS.set('cl_ref_processed', processed);
+    setPoints(getPoints() + earned);
+    toast('+' + earned + ' баллов за приглашённого друга!','🎁');
+    logAction('Реферальный бонус: +' + earned + ' баллов');
+  }
+  const el = document.getElementById('refInvited'); if(el) el.textContent = mine.length;
+  const el2 = document.getElementById('refEarned'); if(el2) el2.textContent = mine.length * REF_BONUS;
+}
+
+function toast(msg, emoji='✓'){
+  const wrap = document.getElementById('toastWrap');
+  const el = document.createElement('div'); el.className='toast glass';
+  el.innerHTML = `<div class="ic">${emoji}</div><p>${msg}</p>`;
+  wrap.appendChild(el);
+  requestAnimationFrame(()=> el.classList.add('show'));
+  setTimeout(()=>{ el.classList.remove('show'); setTimeout(()=>el.remove(),400); }, 2200);
+}
+function labelFor(cat){ const c = categories.find(x=>x.key===cat); return c ? c.label : cat; }
+function fmt(n){ return n.toLocaleString('ru-RU') + ' ₽'; }
+function cartQtyForProduct(id){ let s=0; Object.values(state.cart).forEach(i=>{ if(i.id===id) s+=i.qty; }); return s; }
+
+/* ===================== PRODUCT CARD ===================== */
+function badgeClass(b){
+  const v = String(b||'').toLowerCase();
+  if(v==='хит') return 'b-hit';
+  if(v==='новинка') return 'b-new';
+  if(v==='скидка') return 'b-sale';
+  if(v==='топ') return 'b-top';
+  return 'b-def';
+}
+function productCard(p, delay){
+  const totalQty = cartQtyForProduct(p.id);
+  const accent = (p.groups && p.groups[0] && p.groups[0].type==='swatch') ? p.groups[0].options[0].color : null;
+  const card = document.createElement('div');
+  card.className = 'pcard ' + p.ph;
+  card.style.animationDelay = delay + 's';
+  card.innerHTML = `
+    <img class="pcard-photo" src="${p.img}" alt="" onerror="this.style.display='none'">
+    ${p.badge ? `<span class="pcard-badge ${badgeClass(p.badge)}">${esc(p.badge)}</span>` : ''}
+    <div class="pcard-scrim"></div>
+    <div class="pcard-panel">
+      <div class="pcard-glow"></div>
+      <div class="pcard-top-row">
+        <span class="pcard-cat">${labelFor(p.cat)}</span>
+        ${accent ? `<span class="pcard-dot" style="background:${accent}"></span>` : ''}
+      </div>
+      <h4 class="pcard-title">${p.title}</h4>
+      <div class="pcard-bottom">
+        <span class="pcard-price">${fmt(p.price)}</span>
+        <div class="pcard-add-wrap">
+          ${totalQty>0 ? `<span class="pcard-count">${totalQty}</span>` : ''}
+          <div class="pcard-add"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></div>
+        </div>
+      </div>
+    </div>`;
+  card.querySelector('.pcard-photo').addEventListener('click', ()=>openSheet(p));
+  card.querySelector('.pcard-title').addEventListener('click', ()=>openSheet(p));
+  card.querySelector('.pcard-add').addEventListener('click', (e)=>{ e.stopPropagation(); openSheet(p); });
+  return card;
+}
+
+let currentCat='all', searchVal='';
+function renderCatalogGrid(cat, search){
+  const grid = document.getElementById('catalogGrid');
+  let list = products.filter(p=>!p.hidden);
+  if(cat && cat!=='all') list = list.filter(p=>p.cat===cat);
+  if(search) list = list.filter(p=>p.title.toLowerCase().includes(search.toLowerCase()));
+  grid.innerHTML='';
+  if(list.length===0){ grid.style.display='block'; grid.innerHTML = emptyHTML('🔍','Ничего не найдено','Попробуй изменить запрос или категорию'); return; }
+  grid.style.display='grid';
+  list.forEach((p,i)=> grid.appendChild(productCard(p, Math.min(i*0.04, .32))));
+}
+function renderHomeGrid(){
+  const g = document.getElementById('homeGrid'); if(!g) return;
+  g.innerHTML='';
+  let list = products.filter(p=>!p.hidden && p.popular);
+  if(!list.length) list = products.filter(p=>!p.hidden).slice(0,2); // если ничего не отмечено — первые 2
+  else list = list.slice(0,6);
+  list.forEach((p,i)=> g.appendChild(productCard(p, i*0.05)));
+}
+function emptyHTML(icon,title,text,btnText,btnAction){
+  return `<div class="empty"><div class="empty-icon glass">${icon}</div><h3>${title}</h3><p>${text}</p>
+  ${btnText?`<div class="empty-btn" onclick="${btnAction}">${btnText}</div>`:''}</div>`;
+}
+
+/* ===================== SEGMENTED CATEGORIES ===================== */
+const segScroll = document.getElementById('catSegment');
+const segThumb = document.getElementById('segThumb');
+function setSegment(catKey, animate){
+  const items = [...segScroll.querySelectorAll('.segment-item')];
+  if(!items.length) return;
+  const target = items.find(i=>i.dataset.cat===catKey) || items[0];
+  items.forEach(i=>i.classList.toggle('active', i===target));
+  segThumb.style.left = target.offsetLeft + 'px';
+  segThumb.style.width = target.offsetWidth + 'px';
+  try{ target.scrollIntoView({behavior: animate ? 'smooth':'auto', inline:'center', block:'nearest'}); }catch(e){}
+}
+function renderSegments(){
+  segScroll.querySelectorAll('.segment-item').forEach(i=>i.remove());
+  const mk = (key, ic, label)=>{
+    const b = document.createElement('button');
+    b.className = 'segment-item' + (currentCat===key ? ' active' : '');
+    b.dataset.cat = key;
+    b.innerHTML = `<span class="seg-ic">${ic}</span>${esc(label)}`;
+    b.addEventListener('click', ()=>{
+      haptic('light'); currentCat = b.dataset.cat;
+      setSegment(currentCat, true);
+      renderCatalogGrid(currentCat, searchVal);
+    });
+    segScroll.appendChild(b);
+  };
+  mk('all','🌈','Всё');
+  categories.forEach(c=>mk(c.key, c.emoji, c.label));
+  setSegment(currentCat, false);
+}
+function renderQuickCats(){
+  const wrap = document.getElementById('quickCats');
+  ensureCatColors();
+  const tile = (cat, cls, delay)=> cat ? `
+    <div class="qcat ${cls}" data-cat="${esc(cat.key)}" style="--qc:${cat.color};background:linear-gradient(148deg,${cat.color}3d,${cat.color}0e);border:1px solid ${cat.color}4d;box-shadow:0 16px 38px -16px ${cat.color}5c;">
+      <div class="ic" style="animation-delay:${delay}s">${cat.emoji}</div>
+      <span>${esc(cat.label)}</span>
+    </div>` : '';
+  let html = '';
+  for(let i=0;i<categories.length;i+=2){
+    const flip = (((i/2)|0) % 2) === 1;
+    const a = categories[i], b = categories[i+1];
+    html += `<div class="qrow${flip?' flip':''}">${tile(a,'a',(i*0.45)%3)}${tile(b,'b',(i*0.45+0.7)%3)}</div>`;
+  }
+  wrap.innerHTML = html;
+  wrap.querySelectorAll('.qcat').forEach(q=>{
+    q.addEventListener('click', ()=>{
+      haptic('light'); goto('catalog'); currentCat = q.dataset.cat;
+      setSegment(currentCat, false);
+      renderCatalogGrid(currentCat, searchVal);
+    });
+  });
+}
+
+/* ===================== CART ===================== */
+function cartTotals(){
+  let subtotal=0, count=0;
+  Object.values(state.cart).forEach(i=>{ subtotal += i.price*i.qty; count += i.qty; });
+  return {subtotal, count};
+}
+function updateCartUI(){
+  const {count} = cartTotals();
+  const badge = document.getElementById('navCartCount');
+  if(count>0){ badge.style.display='flex'; badge.textContent=count; } else badge.style.display='none';
+  document.getElementById('statItems').textContent = count;
+}
+
+function renderCart(){
+  const sec = document.getElementById('cartSection');
+  const keys = Object.keys(state.cart);
+  if(keys.length===0){ sec.innerHTML = emptyHTML('🛒','Корзина пуста','Добавь что-нибудь из каталога','В каталог',"goto('catalog')"); return; }
+  const {subtotal} = cartTotals();
+  const total = subtotal;
+  let html='';
+  keys.forEach(key=>{
+    const item = state.cart[key];
+    html += `<div class="cart-item glass" data-key="${key}">
+      <div class="cart-item-media ${item.ph}"><img src="${item.img}" alt="" onerror="this.style.display='none'"></div>
+      <div class="cart-item-info">
+        <h4>${item.title}</h4>
+        ${item.variantLabel ? `<span class="variant-tag">${item.variantLabel}</span>` : ''}
+        <div class="cart-item-bottom">
+          <div class="qty-mini"><button class="minus"><svg viewBox="0 0 24 24"><path d="M5 12h14"/></svg></button><span>${item.qty}</span><button class="plus"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button></div>
+          <div class="cart-item-price">${fmt(item.price*item.qty)}</div>
+        </div>
+      </div>
+      <div class="remove-btn"><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></div>
+    </div>`;
+  });
+  html += `<div class="summary glass">
+      <div class="sum-row"><span>Товары</span><span>${fmt(subtotal)}</span></div>
+      <div class="sum-divider"></div>
+      <div class="sum-total"><span>Итого</span><b>${fmt(total)}</b></div>
+    </div>
+    <div class="checkout-btn" id="checkoutBtn">Оформить заказ <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>`;
+  sec.innerHTML = html;
+
+  sec.querySelectorAll('.cart-item').forEach(row=>{
+    const key = row.dataset.key;
+    row.querySelector('.minus').addEventListener('click', ()=>{
+      haptic('light'); state.cart[key].qty--;
+      if(state.cart[key].qty<=0) delete state.cart[key];
+      updateCartUI(); renderCart(); renderCatalogGrid(currentCat, searchVal, true);
+    });
+    row.querySelector('.plus').addEventListener('click', ()=>{
+      haptic('light'); state.cart[key].qty++;
+      updateCartUI(); renderCart(); renderCatalogGrid(currentCat, searchVal, true);
+    });
+    row.querySelector('.remove-btn').addEventListener('click', ()=>{
+      haptic('medium'); delete state.cart[key];
+      updateCartUI(); renderCart(); renderCatalogGrid(currentCat, searchVal, true);
+      toast('Товар удалён','🗑');
+    });
+  });
+  document.getElementById('checkoutBtn').addEventListener('click', openCheckout);
+}
+
+/* ===================== WINDOW-BACK LAYERS =====================
+   Кнопки «назад» внутри интерфейса убраны: назад теперь работает
+   через кнопку окна (Telegram BackButton / системный назад). */
+let layerStack = [];
+let histSeq = 0;
+const consumedHids = new Set(); // history-записи, уже закрытые через UI (мертвые нажатия назад)
+function updateBackBtn(){
+  try{ const bb = Telegram.WebApp.BackButton; if(layerStack.length) bb.show(); else bb.hide(); }catch(e){}
+}
+function pushLayer(name, closeFn){
+  const hid = ++histSeq;
+  layerStack.push({ name, close: closeFn, hid });
+  try{ history.pushState({ hid }, ''); }catch(e){}
+  updateBackBtn();
+}
+function popLayerUI(){
+  const l = layerStack.pop();
+  if(!l) return;
+  try{ l.close(); }catch(e){}
+  try{
+    const st = history.state;
+    if(st && st.hid === l.hid){ // убираем свою запись из истории
+      consumedHids.add(l.hid);
+      history.back(); // если этот back() будет отменён новым pushState — запись останется «мёртвой» и безопасно поглотится позже
+    }
+  }catch(e){}
+  updateBackBtn();
+}
+window.addEventListener('popstate', ()=>{
+  const st = history.state;
+  if(st && st.hid && consumedHids.has(st.hid)){ consumedHids.delete(st.hid); updateBackBtn(); return; }
+  if(layerStack.length){
+    const l = layerStack.pop();
+    try{ l.close(); }catch(e){}
+  }
+  updateBackBtn();
+});
+try{ Telegram.WebApp.BackButton.onClick(()=>{ if(layerStack.length) popLayerUI(); }); }catch(e){}
+
+/* ===================== CHECKOUT ===================== */
+const chkOverlay = document.getElementById('chkOverlay');
+const chkSheet = document.getElementById('chkSheet');
+let chkMethod = 'delivery';
+let chkDistrict = null;   // выбранный район {id,name,price}
+let chkPay = null;        // crypto | transfer | cash
+const PAY_LABELS = {crypto:'₿ Криптовалюта', transfer:'🏦 Перевод', cash:'💵 Наличные'};
+/* комиссия за перевод/крипту: до 1000 ₽ — 75 ₽, от 1000 ₽ до 10 000 ₽ — 25% (потолок 2500 ₽) */
+const FEE_METHODS = ['transfer','crypto'];
+const TRANSFER_FEE_FLAT = 75, TRANSFER_FEE_PCT = 0.25, TRANSFER_FEE_MAX = 2500;
+function transferFeeFor(amount){
+  if(amount <= 0) return 0;
+  if(amount < 1000) return TRANSFER_FEE_FLAT;
+  return Math.min(Math.round(amount * TRANSFER_FEE_PCT), TRANSFER_FEE_MAX);
+}
+let mapPick = { lat:null, lon:null, addr:'' };
+
+/* маска телефона: +7 (999) 123-45-67 */
+function formatPhone(v){
+  let d = v.replace(/\D/g,'');
+  if(!d) return '';
+  if(d[0]==='8') d = '7' + d.slice(1);
+  if(d[0]!=='7') d = '7' + d;
+  d = d.slice(0,11);
+  let out = '+7';
+  if(d.length>1) out += ' (' + d.slice(1,4);
+  if(d.length>=5) out += ')';
+  else if(d.length>1) out += '';
+  if(d.length>4) out += ' ' + d.slice(4,7);
+  if(d.length>7) out += '-' + d.slice(7,9);
+  if(d.length>9) out += '-' + d.slice(9,11);
+  return out;
+}
+document.getElementById('chkPhone').addEventListener('input', (e)=>{
+  e.target.value = formatPhone(e.target.value);
+});
+function renderDistrictChips(){
+  const row = document.getElementById('districtRow');
+  row.innerHTML = districts.map(d=>{
+    const dp = districtPrice(d);
+    return `<div class="district-chip ${chkDistrict && chkDistrict.id===d.id ? 'active':''}" data-d="${d.id}">${esc(d.name)}<small>${dp===0 ? 'беспл' : dp+'₽'}</small></div>`;
+  }).join('');
+  row.querySelectorAll('.district-chip').forEach(ch=>{
+    ch.addEventListener('click', ()=>{
+      haptic('light');
+      chkDistrict = districts.find(x=>x.id===ch.dataset.d) || null;
+      renderDistrictChips(); updateCheckoutTotals();
+    });
+  });
+}
+let usePoints = false;
+function pointsDiscountMax(){
+  return Math.min(Math.floor(getPoints() / POINTS_PER_RUB), 100000);
+}
+function updateCheckoutTotals(){
+  const {subtotal, count} = cartTotals();
+  const delivery = (chkMethod==='delivery' && chkDistrict) ? districtPrice(chkDistrict) : 0;
+  const discount = usePoints ? Math.min(pointsDiscountMax(), subtotal + delivery) : 0;
+  const afterPoints = subtotal + delivery - discount;
+  const fee = (FEE_METHODS.includes(chkPay) && afterPoints > 0) ? transferFeeFor(afterPoints) : 0;
+  document.getElementById('chkTotal').textContent = fmt(afterPoints + fee);
+  let sum = count + ' шт · товары ' + fmt(subtotal);
+  if(chkMethod==='pickup') sum += ' · самовывоз';
+  else if(chkDistrict) sum += ' · доставка (' + chkDistrict.name + ') ' + (delivery===0 && chkDistrict.price>0 ? 'бесплатно от ' + FREE_DELIVERY_FROM + ' ₽' : fmt(delivery));
+  else sum += ' · доставка: выбери район';
+  if(discount > 0) sum += (afterPoints <= 0 ? ' · полностью баллами' : ' · баллы −' + fmt(discount));
+  if(fee > 0) sum += ' · комиссия перевода ' + fmt(fee);
+  document.getElementById('chkSummary').textContent = sum;
+}
+function refreshPayChips(){
+  const chip = document.getElementById('payPointsChip');
+  const note = document.getElementById('payPointsNote');
+  const bal  = document.getElementById('payPointsBal');
+  const pts = getPoints();
+  if(pts >= 1000){
+    chip.style.display = 'flex';
+    chip.classList.toggle('active', usePoints);
+    note.style.display = 'block';
+    bal.textContent = pts + ' баллов (≈' + fmt(Math.floor(pts / POINTS_PER_RUB)) + ')';
+  } else {
+    chip.style.display = 'none'; usePoints = false; chip.classList.remove('active');
+    note.style.display = 'none';
+  }
+}
+
+function openCheckout(){
+  const {subtotal, count} = cartTotals();
+  if(subtotal<=0) return;
+  haptic('medium');
+  chkMethod = 'delivery'; chkDistrict = null; chkPay = null; usePoints = false;
+  mapPick = { lat:null, lon:null, addr:'' };
+  chkSheet.querySelectorAll('.method-chip[data-m]').forEach(c=>c.classList.toggle('active', c.dataset.m==='delivery'));
+  chkSheet.querySelectorAll('.method-chip[data-pay]').forEach(c=>c.classList.remove('active'));
+  document.getElementById('payFeeNote').style.display = 'none';
+  document.getElementById('addrField').style.display = 'block';
+  document.getElementById('districtField').style.display = 'block';
+  renderDistrictChips();
+  document.getElementById('chkAddr').value = '';
+  document.getElementById('chkComment').value = '';
+  // автозаполнение из Telegram
+  let fname = '', uname = '';
+  try{
+    const u = Telegram.WebApp.initDataUnsafe && Telegram.WebApp.initDataUnsafe.user;
+    if(u){ fname = u.first_name || ''; uname = u.username ? '@'+u.username : ''; }
+  }catch(e){}
+  const nameEl = document.getElementById('chkName'), tgEl = document.getElementById('chkTg');
+  if(!nameEl.value) nameEl.value = fname;
+  if(!tgEl.value) tgEl.value = uname;
+  refreshPayChips();
+  updateCheckoutTotals();
+  chkOverlay.classList.add('show'); chkSheet.classList.add('show');
+  pushLayer('checkout', closeCheckoutUI);
+}
+function closeCheckoutUI(){ chkOverlay.classList.remove('show'); chkSheet.classList.remove('show'); }
+chkOverlay.addEventListener('click', popLayerUI);
+chkSheet.querySelectorAll('.method-chip[data-m]').forEach(chip=>{
+  chip.addEventListener('click', ()=>{
+    haptic('light'); chkMethod = chip.dataset.m;
+    chkSheet.querySelectorAll('.method-chip[data-m]').forEach(c=>c.classList.toggle('active', c===chip));
+    const isDelivery = chkMethod==='delivery';
+    document.getElementById('addrField').style.display = isDelivery ? 'block' : 'none';
+    document.getElementById('districtField').style.display = isDelivery ? 'block' : 'none';
+    updateCheckoutTotals();
+  });
+});
+chkSheet.querySelectorAll('.method-chip[data-pay]').forEach(chip=>{
+  chip.addEventListener('click', ()=>{
+    haptic('light');
+    if(chip.dataset.pay === 'points'){
+      usePoints = !usePoints;
+      chip.classList.toggle('active', usePoints);
+      updateCheckoutTotals();
+    } else {
+      chkPay = chip.dataset.pay;
+      chkSheet.querySelectorAll('.method-chip[data-pay]:not([data-pay="points"])').forEach(c=>c.classList.toggle('active', c===chip));
+      document.getElementById('payFeeNote').style.display = FEE_METHODS.includes(chkPay) ? 'block' : 'none';
+      updateCheckoutTotals();
+    }
+  });
+});
+document.getElementById('submitOrderBtn').addEventListener('click', submitOrder);
+
+function submitOrder(){
+  const name = document.getElementById('chkName').value.trim();
+  const phone = document.getElementById('chkPhone').value.trim();
+  const tg = document.getElementById('chkTg').value.trim();
+  const addr = document.getElementById('chkAddr').value.trim();
+  const comment = document.getElementById('chkComment').value.trim();
+  if(name.length < 2){ toast('Укажи, как к тебе обращаться','⚠️'); return; }
+  if(phone.replace(/\D/g,'').length < 11){ toast('Введи номер полностью','⚠️'); return; }
+  if(tg.length < 2){ toast('Укажи свой Telegram','⚠️'); return; }
+  if(chkMethod==='delivery' && !chkDistrict){ toast('Выбери район доставки','⚠️'); return; }
+  if(!chkPay && !usePoints){ toast('Выбери способ оплаты','⚠️'); return; }
+  const {subtotal, count} = cartTotals();
+  if(subtotal<=0) return;
+  const delivery = chkMethod==='pickup' ? 0 : (chkDistrict ? districtPrice(chkDistrict) : 0);
+  const pointsDiscount = usePoints ? Math.min(pointsDiscountMax(), subtotal + delivery) : 0;
+  const pointsUsed = pointsDiscount ? Math.min(getPoints(), pointsDiscount * POINTS_PER_RUB) : 0;
+  const remainingAfter = subtotal + delivery - pointsDiscount;
+  if(remainingAfter > 0 && !chkPay){ toast('Осталось ' + fmt(remainingAfter) + ' — выбери способ оплаты','⚠️'); return; }
+  const transferFee = (FEE_METHODS.includes(chkPay) && remainingAfter > 0) ? transferFeeFor(remainingAfter) : 0;
+  let payLabel;
+  if(remainingAfter <= 0) payLabel = '💰 Баллы (полностью)';
+  else payLabel = PAY_LABELS[chkPay] + (pointsUsed ? ' + баллы −' + fmt(pointsDiscount) : '');
+  const order = {
+    id: 'CL-' + Date.now().toString(36).toUpperCase(),
+    createdAt: new Date().toISOString(),
+    items: Object.values(state.cart).map(i=>({ title:i.title, variant:i.variantLabel||'', price:i.price, qty:i.qty })),
+    subtotal, delivery, total: subtotal + delivery - pointsDiscount + transferFee,
+    pointsUsed, pointsDiscount, transferFee,
+    customer: { name, phone, telegram: tg },
+    method: chkMethod,
+    district: chkMethod==='delivery' && chkDistrict ? chkDistrict.name : '',
+    deliveryFee: delivery,
+    payment: payLabel,
+    address: chkMethod==='delivery' ? addr : 'Самовывоз',
+    lat: mapPick.lat, lon: mapPick.lon,
+    comment,
+    status: 'new',
+    tgUser: getTgUser(),
+    clientChatId: (()=>{ const u = getTgUser(); return u ? u.id : null; })()
+  };
+  localOrders.unshift(order); LS.set('cl_orders', localOrders);
+  /* списание баллов */
+  if(pointsUsed) setPoints(getPoints() - pointsUsed);
+  /* реферальный бонус за первый заказ */
+  const inviter = invitedByCode();
+  let refBonus = 0;
+  if(inviter && localStorage.getItem('cl_ref_first_done') !== '1'){
+    localStorage.setItem('cl_ref_first_done', '1');
+    refBonus = REF_BONUS;
+    setPoints(getPoints() + refBonus);
+    const outbox = LS.get('cl_ref_outbox', []);
+    outbox.push({ id:'ref' + Date.now(), code: inviter, byName: name, byTg: tg, at: new Date().toISOString() });
+    LS.set('cl_ref_outbox', outbox);
+  }
+  syncCloud(true);
+  logAction('Новый заказ ' + order.id + ' · ' + fmt(order.total) + (pointsUsed ? ' · баллы −' + pointsUsed : ''));
+  /* уведомление админу о новом заказе */
+  const _aId = adminChatId();
+  if(_aId){
+    tgSendMessage(_aId, orderTextAdmin(order)).then(res=>{
+      logAction(res.ok ? 'Уведомление админу отправлено: ' + order.id
+                       : 'Уведомление админу не доставлено (' + (res.reason||'') + ')');
+    });
+  }
+  /* подтверждение клиенту, что заказ принят */
+  if(order.clientChatId){
+    tgSendMessage(order.clientChatId,
+      `📬 <b>${esc(settings.shopName)}</b>\n\nЗаказ <code>${order.id}</code> принят 🕒\nМы свяжемся с тобой для подтверждения.\nСумма: ${fmt(order.total)}\n\nСпасибо за заказ! 💜`
+    ).then(res=>{
+      logAction(res.ok ? 'Клиенту отправлено подтверждение: ' + order.id
+                       : 'Подтверждение клиенту не доставлено (' + (res.reason||'') + ')');
+    });
+  }
+  state.cart = {};
+  updateCartUI(); updateProfile();
+  renderCart();
+  hapticNotif('success');
+  popLayerUI(); // закрыть форму оформления (sync с history)
+  setTimeout(()=>{
+    document.getElementById('successOverlay').classList.add('show');
+    pushLayer('success', closeSuccessUI);
+  }, 200);
+}
+function closeSuccessUI(){
+  document.getElementById('successOverlay').classList.remove('show');
+  goto('home'); renderCatalogGrid(currentCat, searchVal);
+}
+document.getElementById('closeSuccess').addEventListener('click', popLayerUI);
+
+function updateProfile(){
+  document.getElementById('statOrders').textContent = localOrders.length;
+  document.getElementById('statItems').textContent = cartTotals().count;
+  updatePointsUI();
+  const pid = document.getElementById('profileTgId');
+  const u = getTgUser();
+  if(u) pid.textContent = u.username ? '@' + u.username : 'ID ' + u.id;
+}
+
+/* ===================== ОПРЕДЕЛЕНИЕ АДРЕСА (без карты) ===================== */
+async function reverseGeocode(lat, lon){
+  let addr = '';
+  try{
+    const r = await fetch('https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat='+lat+'&lon='+lon+'&accept-language=ru');
+    if(r.ok){ const j = await r.json(); if(j && j.display_name) addr = j.display_name; }
+  }catch(e){}
+  if(!addr){
+    try{
+      const r2 = await fetch('https://api.bigdatacloud.net/data/reverse-geocode-client?latitude='+lat+'&longitude='+lon+'&localityLanguage=ru');
+      if(r2.ok){
+        const j2 = await r2.json();
+        const street = j2.street && j2.street.name ? j2.street.name : '';
+        const num = j2.streetNumber || '';
+        const city = j2.city || j2.locality || '';
+        const s = [ (street ? street + (num?' '+num:'') : ''), city ].filter(Boolean).join(', ');
+        if(s) addr = s;
+      }
+    }catch(e){}
+  }
+  return addr;
+}
+function detectAddress(){
+  toast('Определяем твой адрес…','📡');
+  const done = async (lat, lon)=>{
+    mapPick = { lat:+lat.toFixed(6), lon:+lon.toFixed(6), addr:'' };
+    const addr = await reverseGeocode(mapPick.lat, mapPick.lon);
+    if(addr){
+      mapPick.addr = addr;
+      document.getElementById('chkAddr').value = addr;
+      toast('Адрес: ' + (addr.length > 44 ? addr.slice(0,44) + '…' : addr),'📍');
+    } else {
+      document.getElementById('chkAddr').value = mapPick.lat + ', ' + mapPick.lon;
+      const cm = document.getElementById('chkComment');
+      if(cm && !cm.value.trim()) cm.value = 'Точка: ' + mapPick.lat + ', ' + mapPick.lon;
+      toast('Адрес не определился — введи вручную','⚠️');
+    }
+  };
+  const viaTelegram = ()=>{
+    try{
+      if(typeof Telegram.WebApp.getLocation === 'function'){
+        Telegram.WebApp.getLocation(loc=>{ if(loc && loc.latitude) done(loc.latitude, loc.longitude); else viaNavigator(); });
+        return;
+      }
+    }catch(e){}
+    viaNavigator();
+  };
+  const viaNavigator = ()=>{
+    if(!navigator.geolocation){ toast('Геолокация недоступна','⚠️'); return; }
+    navigator.geolocation.getCurrentPosition(
+      p=> done(p.coords.latitude, p.coords.longitude),
+      ()=> toast('Не удалось определить геопозицию','⚠️'),
+      { enableHighAccuracy:true, timeout:8000 }
+    );
+  };
+  viaTelegram();
+}
+document.getElementById('geoAddrBtn').addEventListener('click', detectAddress);
+
+/* ===================== REFERRAL ===================== */
+function renderReferral(){
+  document.getElementById('refCodeVal').textContent = myRefCode();
+  creditNewReferrals(LS.get('cl_ref_cache', []));
+}
+function botUsername(){ return String(settings.botUsername || CONFIG.BOT_USERNAME || '').trim().replace(/^@/,''); }
+function openReferral(){ haptic('light'); goto('referral'); renderReferral(); pushLayer('referral', ()=>goto('profile')); }
+document.getElementById('openRefBtn').addEventListener('click', openReferral);
+document.getElementById('copyRefBtn').addEventListener('click', ()=>{
+  haptic('light');
+  const code = myRefCode();
+  try{ navigator.clipboard.writeText(code); toast('Код скопирован','📋'); }
+  catch(e){ toast('Код: ' + code,'📋'); }
+});
+document.getElementById('shareRefBtn').addEventListener('click', ()=>{
+  const code = myRefCode();
+  const bu = botUsername();
+  const link = bu ? ('https://t.me/' + bu + '?start=' + code) : '';
+  const text = encodeURIComponent(`Заходи в Cloud Lab 🛒 Мой код: ${code} — с ним ты получишь 200 баллов (20 ₽) после первого заказа! 🎁`);
+  try{ Telegram.WebApp.openTelegramLink('https://t.me/share/url?url=' + encodeURIComponent(link) + '&text=' + text); }
+  catch(e){ toast('Код для друга: ' + code,'🎁'); }
+});
+
+/* ===================== PRODUCT SHEET (multi-flavor) ===================== */
+const overlay = document.getElementById('overlay');
+const sheet = document.getElementById('sheet');
+let activeProduct = null;
+let multiSelections = {};   // groupIndex -> { optionIndex: qty } — мультивыбор для всех групп
+let sheetQty = 1;
+
+function openSheet(p){
+  haptic('light');
+  activeProduct = p;
+  multiSelections = {};
+  sheetQty = 1;
+
+  const media = document.getElementById('sheetMedia');
+  media.innerHTML = `<img src="${p.img}" alt="" onerror="this.style.display='none'"><div class="sheet-close" id="sheetCloseBtn2"><svg viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></div>`;
+  media.className = 'sheet-media ' + p.ph;
+  document.getElementById('sheetTitle').textContent = p.title;
+  const sb = document.getElementById('sheetBadge');
+  if(p.badge){ sb.style.display='inline-block'; sb.textContent = p.badge; sb.className = 'pcard-badge ' + badgeClass(p.badge); }
+  else sb.style.display='none';
+  document.getElementById('sheetDesc').textContent = p.desc;
+
+  document.getElementById('singleQtyBlock').style.display = (p.groups||[]).length === 0 ? 'flex' : 'none';
+  document.getElementById('sheetQtyVal').textContent = sheetQty;
+
+  renderVariantGroups();
+  updateSheetPrice();
+
+  overlay.classList.add('show'); sheet.classList.add('show');
+  pushLayer('sheet', closeSheet);
+  media.querySelector('#sheetCloseBtn2').addEventListener('click', popLayerUI);
+}
+
+function renderVariantGroups(){
+  const container = document.getElementById('sheetVariants');
+  container.innerHTML = '';
+  const groups = activeProduct.groups || [];
+  const withGroupNames = groups.length > 1; /* если групп несколько — в подпись добавляем имя группы */
+  groups.forEach((g, gi)=>{
+    if(!multiSelections[gi]) multiSelections[gi] = {};
+    const sel = multiSelections[gi];
+    const block = document.createElement('div');
+    block.className = 'variant-block';
+    const label = document.createElement('div');
+    label.className = 'variant-label';
+    label.textContent = g.label + ' (можно несколько)';
+    block.appendChild(label);
+    const row = document.createElement('div');
+    row.className = 'variant-row';
+
+    g.options.forEach((opt, oi)=>{
+      const isOn = sel.hasOwnProperty(oi);
+      const isSwatch = g.type === 'swatch';
+      const el = document.createElement('button');
+      el.className = (isSwatch ? 'flavor-chip' : 'strength-chip') + (isOn ? ' active' : '');
+      el.innerHTML = (isSwatch ? `<span class="dot" style="background:${opt.color}"></span>${opt.name}` : `${opt}`)
+        + ` <svg class="check" viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" style="width:13px;height:13px;display:${isOn?'inline':'none'};stroke:var(--cyan);vertical-align:middle;"><path d="M20 6 9 17l-5-5"/></svg>`;
+      el.addEventListener('click', ()=>{
+        haptic('light');
+        if(sel.hasOwnProperty(oi)) delete sel[oi];
+        else sel[oi] = 1;
+        renderVariantGroups(); updateSheetPrice();
+      });
+      row.appendChild(el);
+    });
+    block.appendChild(row);
+
+    const selKeys = Object.keys(sel);
+    if(selKeys.length > 0){
+      const listWrap = document.createElement('div');
+      listWrap.className = 'selected-flavors';
+      selKeys.forEach(oiStr=>{
+        const oi = +oiStr;
+        const opt = g.options[oi];
+        const name = (typeof opt === 'string') ? opt : opt.name;
+        const rowEl = document.createElement('div');
+        rowEl.className = 'selflav-row';
+        rowEl.innerHTML = `${g.type==='swatch' ? `<span class="dot" style="background:${opt.color}"></span>` : '<span class="dot" style="background:var(--grad)"></span>'}
+          <span class="name">${withGroupNames ? esc(g.label) + ': ' : ''}${esc(name)}</span>
+          <div class="qty-mini">
+            <button class="mm"><svg viewBox="0 0 24 24"><path d="M5 12h14"/></svg></button>
+            <span>${sel[oi]}</span>
+            <button class="pp"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
+          </div>
+          <div class="rm"><svg viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></div>`;
+        rowEl.querySelector('.mm').addEventListener('click', ()=>{
+          haptic('light');
+          if(sel[oi] > 1) sel[oi]--; else delete sel[oi];
+          renderVariantGroups(); updateSheetPrice();
+        });
+        rowEl.querySelector('.pp').addEventListener('click', ()=>{
+          haptic('light'); sel[oi]++;
+          renderVariantGroups(); updateSheetPrice();
+        });
+        rowEl.querySelector('.rm').addEventListener('click', ()=>{
+          haptic('light'); delete sel[oi];
+          renderVariantGroups(); updateSheetPrice();
+        });
+        listWrap.appendChild(rowEl);
+      });
+      block.appendChild(listWrap);
+    } else {
+      const hint = document.createElement('div');
+      hint.className = 'multi-hint';
+      hint.textContent = 'Выбери один или несколько вариантов';
+      block.appendChild(hint);
+    }
+    container.appendChild(block);
+  });
+}
+
+function updateSheetPrice(){
+  let totalQty = 0;
+  Object.values(multiSelections).forEach(sel=>{ Object.values(sel).forEach(q=>{ totalQty += q; }); });
+  if(!totalQty) totalQty = sheetQty;
+  document.getElementById('sheetPrice').textContent = fmt(activeProduct.price * (totalQty || 1));
+}
+
+document.getElementById('sheetQtyMinus').addEventListener('click', ()=>{
+  if(sheetQty<=1) return; haptic('light'); sheetQty--;
+  document.getElementById('sheetQtyVal').textContent = sheetQty; updateSheetPrice();
+});
+document.getElementById('sheetQtyPlus').addEventListener('click', ()=>{
+  if(sheetQty>=10) return; haptic('light'); sheetQty++;
+  document.getElementById('sheetQtyVal').textContent = sheetQty; updateSheetPrice();
+});
+
+document.getElementById('sheetBuy').addEventListener('click', ()=>{
+  if(!activeProduct) return;
+  const groups = activeProduct.groups || [];
+  const hasSelection = Object.keys(multiSelections).some(gi=> multiSelections[gi] && Object.keys(multiSelections[gi]).length);
+
+  if(groups.length){
+    if(!hasSelection){ toast('Выбери хотя бы один вариант','⚠️'); return; }
+    const withGroupNames = groups.length > 1;
+    let lines = 0;
+    Object.keys(multiSelections).forEach(giStr=>{
+      const gi = +giStr;
+      const g = groups[gi]; if(!g) return;
+      const sel = multiSelections[gi];
+      Object.keys(sel).forEach(oiStr=>{
+        const oi = +oiStr;
+        const opt = g.options[oi]; if(!opt) return;
+        const name = (typeof opt === 'string') ? opt : opt.name;
+        const label = withGroupNames ? (g.label + ': ' + name) : name;
+        const cartKey = activeProduct.id + '|' + label;
+        if(!state.cart[cartKey]){
+          state.cart[cartKey] = { id:activeProduct.id, title:activeProduct.title, variantLabel:label,
+            price:activeProduct.price, qty:0, img:activeProduct.img, ph:activeProduct.ph };
+        }
+        state.cart[cartKey].qty += sel[oi];
+        lines++;
+      });
+    });
+    haptic('medium');
+    toast(lines > 1 ? ('Добавлено позиций: ' + lines) : 'Добавлено в корзину','🛒');
+  } else {
+    const label = '';
+    const cartKey = activeProduct.id + '|' + label;
+    if(!state.cart[cartKey]){
+      state.cart[cartKey] = { id:activeProduct.id, title:activeProduct.title, variantLabel:label,
+        price:activeProduct.price, qty:0, img:activeProduct.img, ph:activeProduct.ph };
+    }
+    state.cart[cartKey].qty += sheetQty;
+    haptic('medium');
+    toast('Добавлено в корзину','🛒');
+  }
+
+  updateCartUI();
+  renderCatalogGrid(currentCat, searchVal);
+  popLayerUI();
+});
+function closeSheet(){ overlay.classList.remove('show'); sheet.classList.remove('show'); }
+overlay.addEventListener('click', popLayerUI);
+document.getElementById('sheetCloseBtn').addEventListener('click', popLayerUI);
+
+/* ===================== NAVIGATION ===================== */
+const navScreens = ['home','catalog','cart','profile'];
+function goto(screenName){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('screen-'+screenName).classList.add('active');
+  if(navScreens.includes(screenName)){
+    document.querySelectorAll('.nav-btn').forEach(n=>n.classList.remove('active'));
+    const nb = document.querySelector(`.nav-btn[data-screen="${screenName}"]`);
+    if(nb) nb.classList.add('active');
+    updateNavThumb();
+  }
+  if(screenName==='cart') renderCart();
+  if(screenName==='profile') updateProfile();
+  updateCartUI(); window.scrollTo(0,0);
+}
+/* нижнее меню: простые ровные клики, без drag-навигации */
+document.querySelectorAll('.nav-btn').forEach(item=>{
+  item.addEventListener('pointerdown', ()=>haptic('light'));
+  item.addEventListener('click', ()=>goto(item.dataset.screen));
+});
+/* размеры кнопок фиксированы в CSS (padding 15+15, иконка 19, gap 4) */
+const NAV_GEO = { padX:30, icon:19, gap:4, barPad:7, labelGap:6, labelMax:82 };
+function updateNavThumb(){
+  const thumb = document.getElementById('navThumb');
+  const act = document.querySelector('.nav-btn.active');
+  if(!thumb || !act) return;
+  thumb.className = 'nav-thumb' + (act.classList.contains('tint-pink') ? ' tint-pink' : act.classList.contains('tint-violet') ? ' tint-violet' : '');
+  const btns = [...document.querySelectorAll('.navbar .nav-btn')];
+  let left = NAV_GEO.barPad;
+  for(const b of btns){ if(b === act) break; left += NAV_GEO.padX + NAV_GEO.icon + NAV_GEO.gap; }
+  const label = act.querySelector('.label');
+  const labelW = label ? Math.min(label.scrollWidth || 0, NAV_GEO.labelMax) : 0;
+  thumb.style.left = left + 'px';
+  thumb.style.width = (NAV_GEO.padX + NAV_GEO.icon + (labelW ? NAV_GEO.labelGap + labelW : 0)) + 'px';
+}
+
+/* SEARCH */
+const catSearchBox = document.getElementById('catSearchBox');
+const catSearchInput = document.getElementById('catSearch');
+catSearchInput.addEventListener('focus', ()=> catSearchBox.classList.add('focused'));
+catSearchInput.addEventListener('blur', ()=> catSearchBox.classList.remove('focused'));
+catSearchInput.addEventListener('input', (e)=>{ searchVal = e.target.value; renderCatalogGrid(currentCat, searchVal); });
+
+/* ===================== BANNERS (динамические) ===================== */
+const bannerScroll = document.getElementById('bannerScroll');
+const bannerDots = document.getElementById('bannerDots');
+let bannerAuto = null;
+function updateDots(){
+  const slideH = bannerScroll.children[0] ? bannerScroll.children[0].offsetHeight : 1;
+  const idx = Math.round(bannerScroll.scrollTop / slideH);
+  [...bannerDots.children].forEach((d,i)=> d.classList.toggle('active', i===idx));
+}
+function renderBanners(){
+  const shown = banners.filter(b=>b.on!==false);
+  bannerScroll.innerHTML = shown.map(b=>`
+    <div class="banner-slide">
+      <img src="${esc(b.img)}" alt="" onerror="this.style.display='none'">
+      <div class="banner-scrim"></div>
+      <div class="banner-text"><span class="banner-tag">${esc(b.tag)}</span><h3>${esc(b.title)}</h3></div>
+    </div>`).join('');
+  bannerDots.innerHTML = '';
+  for(let i=0;i<shown.length;i++){ const d=document.createElement('i'); if(i===0) d.classList.add('active'); bannerDots.appendChild(d); }
+  clearInterval(bannerAuto);
+  if(shown.length > 1){
+    bannerAuto = setInterval(()=>{
+      const slideH = bannerScroll.children[0].offsetHeight;
+      const max = bannerScroll.scrollHeight - bannerScroll.clientHeight;
+      let next = bannerScroll.scrollTop + slideH;
+      if(next > max + 5) next = 0;
+      try{ bannerScroll.scrollTo({top:next, behavior:'smooth'}); }catch(e){ bannerScroll.scrollTop = next; }
+    }, 4000);
+    bannerScroll.addEventListener('scroll', updateDots);
+    bannerScroll.addEventListener('touchstart', ()=> clearInterval(bannerAuto), {once:true});
+  }
+}
+
+
+/* ===================== SECRET ADMIN ENTRY: 7 тапов по тексту CLOUD LAB за 5 сек ===================== */
+let logoTaps = [];
+function onLogoTap(){
+  const now = Date.now();
+  logoTaps = logoTaps.filter(t=> now - t < 5000);
+  logoTaps.push(now);
+  if(logoTaps.length >= 7){
+    logoTaps = [];
+    openPin();
+  }
+}
+document.getElementById('brandName').addEventListener('click', onLogoTap);
+
+/* ===================== ADMIN PIN (пароль 0383) ===================== */
+const pinOverlay = document.getElementById('pinOverlay');
+let pinBuf = '';
+function adminPass(){ return localStorage.getItem('cl_admin_pass') || '0383'; }
+function renderPinDots(){
+  [...document.getElementById('pinDots').children].forEach((d,i)=> d.classList.toggle('on', i < pinBuf.length));
+}
+function openPin(){
+  pinBuf = ''; renderPinDots();
+  document.getElementById('pinErr').textContent = '';
+  pinOverlay.classList.add('show');
+  pushLayer('pin', closePinUI);
+}
+function closePinUI(){ pinOverlay.classList.remove('show'); }
+document.getElementById('pinCloseBtn').addEventListener('click', popLayerUI);
+document.getElementById('pinPad').querySelectorAll('.pin-key[data-k]').forEach(k=>{
+  k.addEventListener('click', ()=>{
+    haptic('light');
+    const v = k.dataset.k;
+    if(v === 'back'){ pinBuf = pinBuf.slice(0,-1); renderPinDots(); return; }
+    if(pinBuf.length >= 4) return;
+    pinBuf += v; renderPinDots();
+    if(pinBuf.length === 4){
+      setTimeout(()=>{
+        if(pinBuf === adminPass()){
+          pinBuf = '';
+          popLayerUI();
+          setTimeout(openAdmin, 150);
+        } else {
+          hapticNotif('error');
+          const d = document.getElementById('pinDots');
+          d.classList.add('shake');
+          setTimeout(()=> d.classList.remove('shake'), 450);
+          document.getElementById('pinErr').textContent = 'Неверный пароль';
+          pinBuf = ''; renderPinDots();
+        }
+      }, 140);
+    }
+  });
+});
+
+/* ===================== ADMIN PANEL ===================== */
+const ADMIN_SECTIONS = [
+  {id:'dash',    label:'📊 Дашборд'},
+  {id:'orders',  label:'🧾 Заказы'},
+  {id:'products',label:'📦 Товары'},
+  {id:'cats',    label:'🗂 Категории'},
+  {id:'banners', label:'🖼 Баннеры'},
+  {id:'clients', label:'👥 Клиенты'},
+  {id:'settings',label:'⚙️ Настройки'},
+  {id:'db',      label:'🗄 JSONBin'},
+  {id:'data',    label:'💾 Данные'},
+  {id:'logs',    label:'📋 Журнал'}
+];
+const ORDER_STATUS = {
+  new:       {label:'Новый',       color:'#63e5ff', bg:'rgba(99,229,255,.14)'},
+  confirmed: {label:'Подтверждён', color:'#ffcf7d', bg:'rgba(255,207,125,.14)'},
+  paid:      {label:'Оплачен',      color:'#7ef29d', bg:'rgba(126,242,157,.15)'},
+  delivering:{label:'В доставке',  color:'#a476ff', bg:'rgba(164,118,255,.14)'},
+  done:      {label:'Выполнен',    color:'#4ade80', bg:'rgba(74,222,128,.14)'},
+  canceled:  {label:'Отменён',     color:'#ff5b9a', bg:'rgba(255,91,154,.14)'}
+};
+let adminTab = 'dash', ordersFilter = 'all', adminSearch = '';
+
+function openAdmin(){
+  try{ Telegram.WebApp.expand(); }catch(e){}
+  document.getElementById('navbar').style.display = 'none';
+  goto('admin');
+  adminTab = 'dash';
+  renderAdminTabs(); renderAdmin();
+  logAction('Открытие админ-панели');
+  pushLayer('admin', closeAdminUI);
+  if(DB.ready){
+    DB.read().then(doc=>{
+      if(doc && typeof doc==='object' && !Array.isArray(doc)){ applyCloudDoc(doc, true); renderAdmin(); }
+    }).catch(()=>{});
+  }
+}
+function closeAdminUI(){
+  document.getElementById('navbar').style.display = '';
+  goto('home');
+}
+document.getElementById('adminExitBtn').addEventListener('click', popLayerUI);
+
+function renderAdminTabs(){
+  const t = document.getElementById('adminTabs');
+  t.innerHTML = ADMIN_SECTIONS.map(s=>`<button class="admin-tab ${s.id===adminTab?'active':''}" data-t="${s.id}">${s.label}</button>`).join('');
+  t.querySelectorAll('.admin-tab').forEach(b=>{
+    b.addEventListener('click', ()=>{ haptic('light'); adminTab = b.dataset.t; renderAdminTabs(); renderAdmin(); });
+  });
+}
+function refreshShopUI(){
+  renderQuickCats(); renderSegments(); renderBanners(); renderHomeGrid();
+  renderCatalogGrid(currentCat, searchVal); updateProfile();
+  document.title = settings.shopName;
+  const bn = document.getElementById('brandName'); if(bn) bn.textContent = settings.shopName;
+}
+function saveAllLocal(){
+  LS.set('cl_products', products); LS.set('cl_cats', categories);
+  LS.set('cl_banners', banners); LS.set('cl_settings', settings); LS.set('cl_orders', localOrders); LS.set('cl_districts', districts);
+}
+function renderAdmin(){
+  const body = document.getElementById('adminBody');
+  if(adminTab==='dash') body.innerHTML = adminDashHTML();
+  else if(adminTab==='orders'){ body.innerHTML = adminOrdersHTML(); wireAdminOrders(); }
+  else if(adminTab==='products'){ body.innerHTML = adminProductsHTML(); wireAdminProducts(); }
+  else if(adminTab==='cats'){ body.innerHTML = adminCatsHTML(); wireAdminCats(); }
+  else if(adminTab==='banners'){ body.innerHTML = adminBannersHTML(); wireAdminBanners(); }
+  else if(adminTab==='clients'){ body.innerHTML = adminClientsHTML(); wireAdminClients(); }
+  else if(adminTab==='settings'){ body.innerHTML = adminSettingsHTML(); wireAdminSettings(); }
+  else if(adminTab==='db'){ body.innerHTML = adminDBHTML(); wireAdminDB(); }
+  else if(adminTab==='data'){ body.innerHTML = adminDataHTML(); wireAdminData(); }
+  else if(adminTab==='logs'){ body.innerHTML = adminLogsHTML(); wireAdminLogs(); }
+}
+
+/* ---- Дашборд ---- */
+function adminDashHTML(){
+  const active = localOrders.filter(o=>o.status==='paid'); /* бухгалтерия: только оплаченные */
+  const revenue = active.reduce((s,o)=>s+(o.total||0),0);
+  const avg = active.length ? Math.round(revenue/active.length) : 0;
+  const today = new Date().toDateString();
+  const todayCount = localOrders.filter(o=>new Date(o.createdAt).toDateString()===today).length;
+  const newCount = localOrders.filter(o=>o.status==='new').length;
+  const clients = adminClientList().length;
+  const stat = (l,v)=>`<div class="astat glass"><span>${l}</span><b>${v}</b></div>`;
+  const paidOrders = localOrders.filter(o=>o.status==='paid');
+  const feeSum = paidOrders.reduce((s,o)=>s+(o.transferFee||0),0);
+  const delSum = paidOrders.reduce((s,o)=>s+(o.delivery||0),0);
+  const goodsSum = paidOrders.reduce((s,o)=>s+((o.total||0)-(o.transferFee||0)-(o.delivery||0)),0);
+  const days=[]; for(let i=6;i>=0;i--){ const d=new Date(); d.setDate(d.getDate()-i); days.push(d); }
+  const sums = days.map(d=> localOrders.filter(o=>new Date(o.createdAt).toDateString()===d.toDateString() && o.status==='paid').reduce((s,o)=>s+(o.total||0),0));
+  const max = Math.max(...sums, 1);
+  const dw = ['Вс','Пн','Вт','Ср','Чт','Пт','Сб'];
+  const bars = days.map((d,i)=>`<div class="bar ${i===6?'hi':''}" style="height:${Math.max(4, Math.round(sums[i]/max*100))}%"><span>${dw[d.getDay()]}</span></div>`).join('');
+  const recent = localOrders.slice(0,5).map(o=>`
+    <div class="admin-row glass">
+      <div class="ric">${o.method==='pickup'?'🏃':'🛵'}</div>
+      <div class="rmain"><b>${esc(o.customer ? o.customer.name : '—')} · ${fmt(o.total||0)}</b><span>${esc(o.id)} · ${new Date(o.createdAt).toLocaleString('ru-RU')}</span></div>
+      ${statusChip(o.status)}
+    </div>`).join('');
+  return `<div class="admin-stats">
+      ${stat('Заказов всего', localOrders.length)}
+      ${stat('Новых заказов', newCount)}
+      ${stat('Выручка', fmt(revenue))}
+      ${stat('Средний чек', fmt(avg))}
+      ${stat('Заказов сегодня', todayCount)}
+      ${stat('Клиентов', clients)}
+    </div>
+    <div class="chart-wrap glass" style="margin-top:12px;">
+      <h4>📒 Бухгалтерия · оплаченные заказы</h4>
+      <div class="sum-row"><span>Товары</span><span>${fmt(goodsSum)}</span></div>
+      <div class="sum-row"><span>Заработано с доставки</span><span>${fmt(delSum)}</span></div>
+      <div class="sum-row"><span>Заработано с комиссии</span><span>${fmt(feeSum)}</span></div>
+      <div class="sum-divider"></div>
+      <div class="sum-total"><span>Всего</span><b>${fmt(goodsSum + delSum + feeSum)}</b></div>
+    </div>
+    <div class="chart-wrap glass"><h4>Выручка за 7 дней (оплаченные)</h4><div class="chart">${bars}</div><p class="note" style="margin-top:14px;">💰 В выручку и средний чек попадают только заказы в статусе «Оплачен»</p></div>
+    <div style="padding:18px 0 6px;" class="section-head"><h2>Последние заказы</h2></div>
+    ${recent || '<p class="note">Заказов пока нет</p>'}`;
+}
+
+/* ---- Заказы ---- */
+function statusChip(st){
+  const m = ORDER_STATUS[st] || ORDER_STATUS.new;
+  return `<span class="status-chip" style="color:${m.color};background:${m.bg}">${m.label}</span>`;
+}
+function adminOrdersHTML(){
+  const filters = [['all','Все'],['new','Новые'],['confirmed','Подтверждённые'],['paid','Оплаченные'],['delivering','В доставке'],['done','Выполненные'],['canceled','Отменённые']];
+  const chips = filters.map(f=>`<div class="fchip ${ordersFilter===f[0]?'active':''}" data-f="${f[0]}">${f[1]}</div>`).join('');
+  const list = ordersFilter==='all' ? localOrders : localOrders.filter(o=>o.status===ordersFilter);
+  if(!list.length) return `<div class="filter-row">${chips}</div>` + emptyHTML('🧾','Заказов нет','Здесь появятся заказы из формы оформления');
+  const cards = list.map(o=>{
+    const items = (o.items||[]).map(i=>`${i.qty}× ${esc(i.title)}${i.variant?(' · '+esc(i.variant)):''}`).join('<br>');
+    return `<div class="order-card glass" data-oid="${esc(o.id)}">
+      <div class="order-head"><b>${esc(o.id)}</b><div style="display:flex;align-items:center;gap:8px;"><span class="order-date">${new Date(o.createdAt).toLocaleString('ru-RU')}</span>${statusChip(o.status)}</div></div>
+      <div class="order-info">
+        👤 <b>${esc(o.customer?o.customer.name:'—')}</b> · 📱 ${esc(o.customer?o.customer.phone:'—')} · ✈️ ${esc(o.customer?o.customer.telegram:'—')}<br>
+        ${o.method==='pickup' ? '🏃 Самовывоз' : '🛵 Доставка: ' + (esc(o.address)||'— не указан —') + (o.district ? ' · район: <b>' + esc(o.district) + '</b>' : '')}<br>
+        💳 Оплата: ${esc(o.payment||'—')}${o.transferFee ? ' · комиссия ' + fmt(o.transferFee) : ''}<br>
+        ${o.pointsUsed ? '💰 Баллы: −' + o.pointsUsed + ' (−' + fmt(o.pointsDiscount||0) + ')<br>' : ''}
+        ${(o.lat&&o.lon) ? '📍 '+o.lat+', '+o.lon+' · <a href="https://www.openstreetmap.org/?mlat='+o.lat+'&mlon='+o.lon+'#map=17/'+o.lat+'/'+o.lon+'" target="_blank" rel="noopener" onclick="try{event.preventDefault();Telegram.WebApp.openLink(this.href)}catch(e){}" style="color:var(--cyan);">открыть карту</a>' : ''}
+        ${o.comment ? '<br>💬 '+esc(o.comment) : ''}
+      </div>
+      <div class="order-items">${items || '—'}</div>
+      <div class="order-total"><span>Итого</span><b>${fmt(o.total||0)}</b></div>
+      <div class="order-actions">
+        <select class="status-select" data-oid="${esc(o.id)}">
+          ${Object.keys(ORDER_STATUS).map(k=>`<option value="${k}" ${o.status===k?'selected':''}>${STATUS_EMOJI[k]||''} ${ORDER_STATUS[k].label}</option>`).join('')}
+        </select>
+        <div class="mini-btn danger" data-act="delete" data-oid="${esc(o.id)}">🗑</div>
+      </div>
+    </div>`;
+  }).join('');
+  return `<div class="filter-row">${chips}</div>${cards}`;
+}
+function wireAdminOrders(){
+  const body = document.getElementById('adminBody');
+  body.querySelectorAll('.fchip').forEach(c=>{
+    c.addEventListener('click', ()=>{ haptic('light'); ordersFilter = c.dataset.f; renderAdmin(); });
+  });
+  body.querySelectorAll('.status-select').forEach(sel=>{
+    sel.addEventListener('change', ()=>{
+      const oid = sel.dataset.oid, act = sel.value;
+      const idx = localOrders.findIndex(o=>o.id===oid);
+      if(idx<0) return;
+      haptic('light');
+      localOrders[idx].status = act;
+      const label = ORDER_STATUS[act] ? ORDER_STATUS[act].label : act;
+      logAction('Заказ ' + oid + ' → ' + label);
+      LS.set('cl_orders', localOrders); syncCloud();
+      const o = localOrders[idx];
+      if(o.clientChatId){
+        tgSendMessage(o.clientChatId, orderTextClient(o, act)).then(res=>{
+          if(res.ok) toast('Клиент уведомлён','✈️');
+          else toast('Клиент не уведомлён: ' + (res.reason||''),'⚠️');
+          logAction(res.ok ? 'Клиент уведомлён о статусе: ' + oid
+                           : 'Уведомление клиенту не доставлено: ' + oid + ' (' + (res.reason||'') + ')');
+        });
+      } else {
+        toast('Статус: ' + label,'✓');
+      }
+      renderAdmin();
+    });
+  });
+  body.querySelectorAll('.mini-btn[data-act="delete"]').forEach(b=>{
+    b.addEventListener('click', ()=>{
+      haptic('light');
+      const oid = b.dataset.oid;
+      const idx = localOrders.findIndex(o=>o.id===oid);
+      if(idx<0) return;
+      localOrders.splice(idx,1);
+      logAction('Удалён заказ ' + oid);
+      LS.set('cl_orders', localOrders); syncCloud();
+      renderAdmin();
+    });
+  });
+}
+
+/* ---- Товары ---- */
+let editProductId = null;
+function catEmoji(key){ const c = categories.find(x=>x.key===key); return c ? c.emoji : '🏷'; }
+function adminProductsHTML(){
+  if(editProductId !== null){
+    const isNew = editProductId === 'new';
+    const p = isNew ? {id:Date.now(), cat:categories[0]?categories[0].key:'', title:'', desc:'', price:0, img:'', ph:'ph1', groups:[]} : products.find(x=>String(x.id)===String(editProductId));
+    if(!p){ editProductId=null; return adminProductsHTML(); }
+    const catOpts = categories.map(c=>`<option value="${esc(c.key)}" ${p.cat===c.key?'selected':''}>${c.emoji} ${esc(c.label)}</option>`).join('') + `<option value="__new">＋ Новая категория…</option>`;
+    const badgeOpts = ['','Хит','Новинка','Скидка','Топ'].map(b=>`<option value="${b}" ${p.badge===b?'selected':''}>${b||'Без бейджа'}</option>`).join('');
+    return `<div class="admin-form glass">
+      <h3 style="font-family:var(--font-head);font-size:14px;margin-bottom:14px;">${isNew?'Новый товар':'Редактирование товара'}</h3>
+      <div class="chk-field"><div class="chk-label">Название</div><input class="chk-input" id="pf_title" value="${esc(p.title)}" placeholder="Название"></div>
+      <div class="chk-field"><div class="chk-label">Цена, ₽</div><input class="chk-input" id="pf_price" type="number" inputmode="numeric" value="${p.price||0}"></div>
+      <div class="chk-field"><div class="chk-label">Категория</div><select class="chk-input" id="pf_cat">${catOpts}</select><input class="chk-input" id="pf_cat_new" placeholder="Название новой категории" style="display:none;margin-top:8px;"></div>
+      <div class="chk-field"><div class="chk-label">Бейдж на карточке</div><select class="chk-input" id="pf_badge">${badgeOpts}</select></div>
+      <div class="chk-field"><div class="chk-label">Фото (файл или URL)</div><input class="chk-input" id="pf_img" value="${esc(p.img||'')}" placeholder="images/p1.jpg"></div>
+      <div class="chk-field"><div class="chk-label">Описание</div><textarea class="chk-input" id="pf_desc">${esc(p.desc||'')}</textarea></div>
+      <div class="chk-field"><div class="chk-label">Видимость в каталоге</div>
+        <div class="toggle-chip ${p.hidden?'':'on'}" id="pf_visible" style="display:inline-block;">${p.hidden?'👁 Скрыт':'👁 Виден'}</div>
+      </div>
+      <div class="chk-field"><div class="chk-label">Популярное на главной</div>
+        <div class="toggle-chip ${p.popular?'on':''}" id="pf_popular" style="display:inline-block;">${p.popular?'🔥 В популярном':'🔥 Не в популярном'}</div>
+      </div>
+      <div class="form-actions">
+        <div class="cancel-btn" id="pf_cancel">Отмена</div>
+        <div class="chk-submit" id="pf_save">Сохранить</div>
+      </div>
+    </div>`;
+  }
+  const rows = products.map(p=>`
+    <div class="admin-row glass">
+      <div class="ric">${catEmoji(p.cat)}</div>
+      <div class="rmain"><b>${esc(p.title)} ${p.hidden?'· скрыт':''}</b><span>${esc(labelFor(p.cat))} · ${fmt(p.price)}</span></div>
+      <div class="rbtn" data-edit="${p.id}">✏️</div>
+      <div class="rbtn" data-del="${p.id}">🗑</div>
+    </div>`).join('');
+  return `<div class="mini-btn grad" id="p_add" style="display:inline-flex;margin-bottom:14px;">＋ Добавить товар</div>
+    ${rows || '<p class="note">Товаров нет</p>'}
+    <p class="note" style="margin-top:10px;">Всего товаров: ${products.length}. Изменения сразу видны в каталоге.</p>`;
+}
+function wireAdminProducts(){
+  const body = document.getElementById('adminBody');
+  const add = body.querySelector('#p_add');
+  if(add) add.addEventListener('click', ()=>{ editProductId='new'; renderAdmin(); });
+  const cancel = body.querySelector('#pf_cancel');
+  if(cancel) cancel.addEventListener('click', ()=>{ editProductId=null; renderAdmin(); });
+  const save = body.querySelector('#pf_save');
+  if(save) save.addEventListener('click', ()=>{
+    let p = editProductId==='new' ? null : products.find(x=>String(x.id)===String(editProductId));
+    const title = body.querySelector('#pf_title').value.trim();
+    const price = parseInt(body.querySelector('#pf_price').value,10)||0;
+    let cat = body.querySelector('#pf_cat').value;
+    const img = body.querySelector('#pf_img').value.trim();
+    const desc = body.querySelector('#pf_desc').value.trim();
+    const badge = body.querySelector('#pf_badge') ? body.querySelector('#pf_badge').value : '';
+    const hidden = !body.querySelector('#pf_visible').classList.contains('on');
+    const popular = !!(body.querySelector('#pf_popular') && body.querySelector('#pf_popular').classList.contains('on'));
+    if(title.length<2){ toast('Укажи название','⚠️'); return; }
+    if(cat==='__new'){
+      const newName = (catNew ? catNew.value : '').trim();
+      if(newName.length<2){ toast('Укажи название новой категории','⚠️'); return; }
+      cat = 'cat'+Date.now().toString(36);
+      categories.push({key:cat, label:newName, emoji:'🏷'});
+      logAction('Добавлена категория: '+newName);
+    }
+    if(p){ Object.assign(p, {title,price,cat,img,desc,hidden,popular,badge:badge||undefined}); logAction('Изменён товар: '+title); }
+    else {
+      products.push({ id:Date.now(), cat, title, desc, price, img, ph:'ph'+(1+(products.length%7)), groups:[], hidden, popular, badge:badge||undefined });
+      logAction('Добавлен товар: '+title);
+    }
+    editProductId = null;
+    saveAllLocal(); syncCloud(); refreshShopUI(); renderAdmin();
+    toast('Сохранено','✓');
+  });
+  const vis = body.querySelector('#pf_visible');
+  if(vis) vis.addEventListener('click', ()=>{
+    vis.classList.toggle('on');
+    vis.textContent = vis.classList.contains('on')?'👁 Виден':'👁 Скрыт';
+  });
+  const pop = body.querySelector('#pf_popular');
+  if(pop) pop.addEventListener('click', ()=>{
+    pop.classList.toggle('on');
+    pop.textContent = pop.classList.contains('on')?'🔥 В популярном':'🔥 Не в популярном';
+  });
+  const catSel = body.querySelector('#pf_cat'), catNew = body.querySelector('#pf_cat_new');
+  if(catSel) catSel.addEventListener('change', ()=>{ if(catNew) catNew.style.display = catSel.value==='__new' ? 'block' : 'none'; });
+  body.querySelectorAll('[data-edit]').forEach(b=>b.addEventListener('click', ()=>{ editProductId = b.dataset.edit; renderAdmin(); }));
+  body.querySelectorAll('[data-del]').forEach(b=>b.addEventListener('click', ()=>{
+    const id = b.dataset.del;
+    const i = products.findIndex(x=>String(x.id)===String(id));
+    if(i>=0){ logAction('Удалён товар: '+products[i].title); products.splice(i,1); saveAllLocal(); syncCloud(); refreshShopUI(); renderAdmin(); toast('Товар удалён','🗑'); }
+  }));
+}
+
+/* ---- Категории ---- */
+function adminCatsHTML(){
+  const rows = categories.map((c,i)=>`
+    <div class="admin-row glass">
+      <input class="cat-emoji" data-ce="${i}" value="${esc(c.emoji||'🏷')}" maxlength="4" title="Эмодзи категории">
+      <div class="rmain"><input class="chk-input" data-ci="${i}" value="${esc(c.label)}" style="padding:10px 13px;font-size:12.5px;"></div>
+      <input type="color" class="cat-color" data-cc="${i}" value="${c.color||'#63e5ff'}" title="Цвет плитки">
+      <div class="rbtn" data-cdel="${c.key}">🗑</div>
+    </div>`).join('');
+  return `<p class="note" style="margin-bottom:14px;">Названия категорий меняются сразу и в каталоге, и на главной.</p>
+    ${rows}
+    <div class="admin-form glass" style="margin-top:6px;">
+      <div class="chk-field"><div class="chk-label">Новая категория</div><input class="chk-input" id="cat_new" placeholder="Например: Жвачки"></div>
+      <div class="chk-submit" id="cat_add" style="padding:13px;font-size:12.5px;">＋ Добавить категорию</div>
+    </div>`;
+}
+function wireAdminCats(){
+  const body = document.getElementById('adminBody');
+  body.querySelectorAll('[data-ci]').forEach(inp=>{
+    inp.addEventListener('change', ()=>{
+      const i = +inp.dataset.ci;
+      categories[i].label = inp.value.trim() || categories[i].label;
+      logAction('Категория переименована: '+categories[i].label);
+      saveAllLocal(); syncCloud(); refreshShopUI(); renderAdmin();
+    });
+  });
+  body.querySelectorAll('[data-ce]').forEach(inp=>{
+    inp.addEventListener('change', ()=>{
+      const i = +inp.dataset.ce;
+      categories[i].emoji = (inp.value || '').trim() || '🏷';
+      logAction('Эмодзи категории: ' + categories[i].label);
+      saveAllLocal(); syncCloud(); refreshShopUI(); renderAdmin();
+    });
+  });
+  body.querySelectorAll('[data-cc]').forEach(inp=>{
+    inp.addEventListener('change', ()=>{
+      const i = +inp.dataset.cc;
+      categories[i].color = inp.value;
+      logAction('Цвет категории: ' + categories[i].label);
+      saveAllLocal(); syncCloud(); refreshShopUI();
+    });
+  });
+  body.querySelectorAll('[data-cdel]').forEach(b=>b.addEventListener('click', ()=>{
+    const key = b.dataset.cdel;
+    if(products.some(p=>p.cat===key)){ toast('В категории есть товары','⚠️'); return; }
+    categories = categories.filter(c=>c.key!==key);
+    logAction('Удалена категория '+key);
+    saveAllLocal(); syncCloud(); refreshShopUI(); renderAdmin();
+  }));
+  body.querySelector('#cat_add').addEventListener('click', ()=>{
+    const v = body.querySelector('#cat_new').value.trim();
+    if(v.length<2){ toast('Укажи название','⚠️'); return; }
+    const key = 'cat'+Date.now().toString(36);
+    categories.push({key, label:v, emoji:'🏷'});
+    logAction('Добавлена категория: '+v);
+    saveAllLocal(); syncCloud(); refreshShopUI(); renderAdmin();
+    toast('Категория добавлена','✓');
+  });
+}
+
+/* ---- Баннеры ---- */
+function adminBannersHTML(){
+  const cards = banners.map((b,i)=>`
+    <div class="admin-form glass">
+      <div class="chk-field"><div class="chk-label">Баннер ${i+1} · метка</div><input class="chk-input" data-bt="${i}" value="${esc(b.tag)}"></div>
+      <div class="chk-field"><div class="chk-label">Заголовок</div><input class="chk-input" data-bh="${i}" value="${esc(b.title)}"></div>
+      <div class="chk-field"><div class="chk-label">Картинка (файл или URL)</div><input class="chk-input" data-bi="${i}" value="${esc(b.img)}"></div>
+      <div class="toggle-chip ${b.on!==false?'on':''}" data-bon="${i}">${b.on!==false?'👁 Показывается':'🙈 Скрыт'}</div>
+    </div>`).join('');
+  return `<p class="note" style="margin-bottom:12px;">Баннеры на главной. Изменения применяются сразу.</p>${cards}`;
+}
+function wireAdminBanners(){
+  const body = document.getElementById('adminBody');
+  const applyB = ()=>{ logAction('Обновлён баннер'); saveAllLocal(); syncCloud(); refreshShopUI(); };
+  body.querySelectorAll('[data-bt]').forEach(inp=>inp.addEventListener('change', ()=>{ banners[+inp.dataset.bt].tag = inp.value.trim(); applyB(); }));
+  body.querySelectorAll('[data-bh]').forEach(inp=>inp.addEventListener('change', ()=>{ banners[+inp.dataset.bh].title = inp.value.trim(); applyB(); }));
+  body.querySelectorAll('[data-bi]').forEach(inp=>inp.addEventListener('change', ()=>{ banners[+inp.dataset.bi].img = inp.value.trim(); applyB(); }));
+  body.querySelectorAll('[data-bon]').forEach(t=>t.addEventListener('click', ()=>{
+    const i = +t.dataset.bon;
+    banners[i].on = banners[i].on===false;
+    t.classList.toggle('on', banners[i].on!==false);
+    t.textContent = banners[i].on!==false?'👁 Показывается':'🙈 Скрыт';
+    applyB();
+  }));
+}
+
+/* ---- Клиенты ---- */
+function adminClientList(){
+  const map = {};
+  localOrders.forEach(o=>{
+    if(!o.customer) return;
+    const k = o.customer.telegram || o.customer.phone || 'anon';
+    const c = map[k] || (map[k] = { name:o.customer.name, tg:o.customer.telegram, phone:o.customer.phone, count:0, spent:0, last:o.createdAt });
+    c.count++; c.spent += (o.status==='paid' ? (o.total||0) : 0);
+    if(new Date(o.createdAt) > new Date(c.last)) c.last = o.createdAt;
+    if(o.customer.name) c.name = o.customer.name;
+  });
+  return Object.values(map).sort((a,b)=>b.spent-a.spent);
+}
+function adminClientsHTML(){
+  const list = adminClientList();
+  if(!list.length) return emptyHTML('👥','Клиентов нет','Появятся после первых заказов');
+  const rows = list.map(c=>`
+    <div class="admin-row glass">
+      <div class="ric">🧑</div>
+      <div class="rmain"><b>${esc(c.name)} ${c.tg?esc(c.tg):''}</b><span>${esc(c.phone||'')} · заказов: ${c.count} · ${fmt(c.spent)}</span></div>
+    </div>`).join('');
+  return rows;
+}
+function wireAdminClients(){}
+
+/* ---- Настройки магазина ---- */
+function adminSettingsHTML(){
+  return `<div class="admin-form glass">
+      <div class="chk-field"><div class="chk-label">Название магазина</div><input class="chk-input" id="st_name" value="${esc(settings.shopName)}"></div>
+      <div class="chk-field"><div class="chk-label">Доставка, ₽</div><input class="chk-input" id="st_delivery" type="number" inputmode="numeric" value="${settings.deliveryPrice}"></div>
+      <div class="chk-field"><div class="chk-label">Ссылка поддержки (Telegram)</div><input class="chk-input" id="st_support" value="${esc(settings.supportLink)}" placeholder="https://t.me/username"></div>
+      <div class="chk-field"><div class="chk-label">Уведомления · Bot Token</div><input class="chk-input" id="st_bot" type="password" value="${esc(settings.botToken||'')}" placeholder="токен от @BotFather (или в начале файла)"></div>
+      <div class="chk-field"><div class="chk-label">Username бота (для реф-ссылок)</div><input class="chk-input" id="st_botuser" value="${esc(settings.botUsername||'')}" placeholder="например cloudlab_shop_bot"></div>
+      <div class="chk-field"><div class="chk-label">Уведомления · ID администратора</div><input class="chk-input" id="st_adminid" type="text" inputmode="numeric" value="${esc(settings.adminChatId || CONFIG.ADMIN_CHAT_ID || '')}" placeholder="твой Telegram ID">
+        <div class="note" style="margin-top:6px;">Сюда приходят уведомления о новых заказах. Твой ID: <b>${(()=>{ const u=getTgUser(); return u ? u.id : 'виден после запуска в Telegram'; })()}</b></div></div>
+      <div class="cancel-btn" id="st_testmsg" style="justify-content:center;margin-bottom:4px;">📨 Отправить тестовое уведомление</div>
+      <div class="chk-field"><div class="chk-label">Новый пароль админки (4 цифры)</div><input class="chk-input" id="st_pass" type="password" inputmode="numeric" maxlength="4" placeholder="оставь пустым, чтобы не менять"></div>
+      <div class="chk-submit" id="st_save" style="padding:14px;">Сохранить настройки</div>
+    </div>
+    <p class="note">Пароль по умолчанию — 0383. Вход в админку: 7 нажатий по тексту «CLOUD LAB» в шапке главной за 5 секунд.</p>`;
+}
+function wireAdminSettings(){
+  document.getElementById('st_save').addEventListener('click', ()=>{
+    const name = document.getElementById('st_name').value.trim() || 'CLOUD LAB';
+    settings.shopName = name;
+    settings.deliveryPrice = parseInt(document.getElementById('st_delivery').value,10)||0;
+    settings.supportLink = document.getElementById('st_support').value.trim();
+    settings.botToken = document.getElementById('st_bot').value.trim();
+    settings.botUsername = document.getElementById('st_botuser').value.trim().replace(/^@/,'');
+    settings.adminChatId = document.getElementById('st_adminid').value.trim();
+    const np = document.getElementById('st_pass').value.trim();
+    if(np){ if(/^\d{4}$/.test(np)){ localStorage.setItem('cl_admin_pass', np); toast('Пароль обновлён','🔑'); } else toast('Пароль — 4 цифры','⚠️'); }
+    logAction('Настройки магазина обновлены');
+    saveAllLocal(); syncCloud(); refreshShopUI(); renderAdmin();
+    toast('Настройки сохранены','✓');
+  });
+  document.getElementById('st_testmsg').addEventListener('click', async ()=>{
+    const res = await tgSendMessage(adminChatId(), `✅ <b>${esc(settings.shopName)}</b>\nУведомления работают!`);
+    toast(res.ok ? 'Уведомление отправлено!' : 'Не удалось: ' + (res.reason||''), res.ok?'✅':'⚠️');
+    logAction(res.ok ? 'Тестовое уведомление отправлено' : 'Тестовое уведомление не доставлено ('+(res.reason||'')+')');
+  });
+}
+
+/* ---- JSONBin ---- */
+function adminDBHTML(){
+  const ready = DB.ready;
+  const lockBin = !!CONFIG.JSONBIN_BIN_ID, lockKey = !!CONFIG.JSONBIN_KEY;
+  return `<div class="admin-form glass">
+      <div style="display:flex;align-items:center;margin-bottom:14px;">
+        <span class="db-dot ${ready?'on':'off'}"></span>
+        <b style="font-size:13px;">${ready?'Подключено к JSONBin':'Локальный режим (localStorage)'}</b>
+      </div>
+      ${(lockBin||lockKey) ? '<p class="note" style="margin-bottom:12px;">ℹ️ Часть данных задана в начале файла index.html — она в приоритете.</p>' : ''}
+      <div class="chk-field"><div class="chk-label">Bin ID</div><input class="chk-input" id="db_bin" value="${esc(DB.binId)}" placeholder="66f2xxxxxxxxxxxx" ${lockBin?'disabled':''}></div>
+      <div class="chk-field"><div class="chk-label">X-Master-Key</div><input class="chk-input" id="db_key" type="password" value="${esc(DB.key)}" placeholder="ключ из jsonbin.io → API Keys" ${lockKey?'disabled':''}></div>
+      <div class="form-actions">
+        <div class="chk-submit" id="db_save" style="font-size:12px;padding:13px;">Сохранить</div>
+        <div class="cancel-btn" id="db_test">Проверить</div>
+      </div>
+      <div class="form-actions" style="margin-top:10px;">
+        <div class="cancel-btn" id="db_pull">⬇ Из облака</div>
+        <div class="cancel-btn" id="db_push">⬆ В облако</div>
+      </div>
+    </div>
+    <p class="note"><b>Как подключить базу:</b><br>
+    1. Зарегистрируйся на jsonbin.io<br>
+    2. Create Bin — создай контейнер, например с содержимым <code>{}</code><br>
+    3. Скопируй Bin ID и X-Master-Key (раздел API Keys)<br>
+    4. Впиши их в начало файла index.html (блок CONFIG) — или сюда<br><br>
+    Пока база не настроена, заказы хранятся локально на устройстве.</p>`;
+}
+function wireAdminDB(){
+  const body = document.getElementById('adminBody');
+  const readInputs = ()=>{
+    if(!CONFIG.JSONBIN_BIN_ID) localStorage.setItem('cl_bin_id', body.querySelector('#db_bin').value.trim());
+    if(!CONFIG.JSONBIN_KEY) localStorage.setItem('cl_bin_key', body.querySelector('#db_key').value.trim());
+  };
+  body.querySelector('#db_save').addEventListener('click', ()=>{
+    readInputs();
+    logAction('Настройки JSONBin обновлены');
+    renderAdmin();
+    toast(DB.ready ? 'База подключена' : 'Заполни оба поля','✓');
+  });
+  body.querySelector('#db_test').addEventListener('click', async ()=>{
+    readInputs();
+    toast('Проверяем подключение…','📡');
+    try{ await DB.read(); toast('Подключение работает!','✅'); logAction('Проверка JSONBin — успех'); }
+    catch(e){ toast('Ошибка: ' + e.message,'⚠️'); }
+  });
+  body.querySelector('#db_pull').addEventListener('click', async ()=>{
+    toast('Загружаем из облака…','⬇');
+    try{
+      const doc = await DB.read();
+      applyCloudDoc(doc, false);
+      logAction('Данные загружены из JSONBin');
+      toast('Данные загружены','✅'); renderAdmin();
+    }catch(e){ toast('Ошибка: ' + e.message,'⚠️'); }
+  });
+  body.querySelector('#db_push').addEventListener('click', async ()=>{
+    toast('Выгружаем в облако…','⬆');
+    try{
+      await syncCloud(true);
+      logAction('Данные выгружены в JSONBin');
+      toast('Готово, данные в облаке','✅');
+    }catch(e){ toast('Ошибка: ' + e.message,'⚠️'); }
+  });
+}
+
+/* ---- Данные (экспорт/импорт) ---- */
+function allDataJSON(){
+  return JSON.stringify({ shop:settings.shopName, exportedAt:new Date().toISOString(), orders:localOrders, products, categories, banners, settings, logs:adminLogs }, null, 2);
+}
+function adminDataHTML(){
+  return `<div class="form-actions" style="margin-bottom:14px;">
+      <div class="chk-submit" id="ex_dl" style="font-size:12px;padding:13px;">⬇ Скачать JSON</div>
+      <div class="cancel-btn" id="ex_copy">📋 Копировать</div>
+    </div>
+    <div class="form-actions" style="margin-bottom:14px;">
+      <div class="cancel-btn" id="ex_import">📂 Импорт из файла</div>
+      <div class="cancel-btn" id="ex_wipe_orders" style="color:var(--pink);">🗑 Очистить заказы</div>
+    </div>
+    <textarea class="chk-input" id="ex_area" readonly style="min-height:220px;font-size:10px;font-family:monospace;">${esc(allDataJSON())}</textarea>
+    <input type="file" id="ex_file" accept=".json,application/json" style="display:none;">`;
+}
+function wireAdminData(){
+  const body = document.getElementById('adminBody');
+  body.querySelector('#ex_dl').addEventListener('click', ()=>{
+    const blob = new Blob([allDataJSON()], {type:'application/json'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'cloudlab-backup-' + new Date().toISOString().slice(0,10) + '.json';
+    a.click();
+    logAction('Скачан бэкап данных');
+  });
+  body.querySelector('#ex_copy').addEventListener('click', ()=>{
+    const ta = body.querySelector('#ex_area');
+    ta.select();
+    try{ document.execCommand('copy'); toast('Скопировано','📋'); }catch(e){ toast('Выдели и скопируй вручную','📋'); }
+  });
+  const fileBtn = body.querySelector('#ex_import'), fileInp = body.querySelector('#ex_file');
+  fileBtn.addEventListener('click', ()=> fileInp.click());
+  fileInp.addEventListener('change', ()=>{
+    const f = fileInp.files[0]; if(!f) return;
+    const r = new FileReader();
+    r.onload = ()=>{
+      try{
+        const doc = JSON.parse(r.result);
+        applyCloudDoc(doc, true);
+        saveAllLocal(); refreshShopUI();
+        logAction('Импорт данных из файла');
+        toast('Данные импортированы','✅'); renderAdmin();
+      }catch(e){ toast('Файл повреждён','⚠️'); }
+    };
+    r.readAsText(f);
+  });
+  body.querySelector('#ex_wipe_orders').addEventListener('click', ()=>{
+    localOrders = []; LS.set('cl_orders', localOrders);
+    logAction('Все заказы удалены');
+    syncCloud(); renderAdmin(); toast('Заказы очищены','🗑');
+  });
+}
+
+/* ---- Журнал ---- */
+function adminLogsHTML(){
+  const rows = adminLogs.map(l=>`<div class="log-line"><b>${new Date(l.t).toLocaleString('ru-RU')}</b> — ${esc(l.text)}</div>`).join('');
+  return `<div class="mini-btn danger" id="logs_clear" style="display:inline-flex;margin-bottom:14px;">Очистить журнал</div>
+    ${rows || '<p class="note">Пока пусто</p>'}`;
+}
+function wireAdminLogs(){
+  const b = document.getElementById('logs_clear');
+  if(b) b.addEventListener('click', ()=>{ adminLogs=[]; LS.set('cl_logs', adminLogs); renderAdmin(); toast('Журнал очищен','🗑'); });
+}
+
+/* ===================== INIT ===================== */
+document.title = settings.shopName;
+const _bn = document.getElementById('brandName'); if(_bn) _bn.textContent = settings.shopName;
+migrateCats();
+migrateDistricts();
+renderQuickCats();
+renderSegments();
+renderBanners();
+renderHomeGrid();
+renderCatalogGrid('all','');
+updateCartUI();
+updateProfile();
+updatePointsUI();
+invitedByCode();
+updateNavThumb();
+window.addEventListener('resize', ()=>{ setSegment(currentCat, false); updateNavThumb(); });
+updateBackBtn();
+/* подтянуть данные из JSONBin, если настроен */
+if(DB.ready){
+  DB.read().then(doc=>{ if(doc && typeof doc==='object' && !Array.isArray(doc)) applyCloudDoc(doc, false); }).catch(()=>{});
+}
+</script>
+</body>
+</html>
