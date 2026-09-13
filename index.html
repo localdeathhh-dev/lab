@@ -314,7 +314,18 @@ textarea.chk-input{resize:none;min-height:74px;line-height:1.5;}
 .astat{border-radius:20px;padding:15px 14px;}
 .astat span{font-size:9.5px;color:var(--muted);display:block;margin-bottom:5px;}
 .astat b{font-family:var(--font-num);font-size:19px;}
-.chart-wrap{border-radius:20px;padding:16px 16px 32px;margin-top:12px;}
+.chart-wrap{border-radius:20px;padding:16px 16px 20px;margin-top:12px;}
+.donut-wrap{display:flex;align-items:center;gap:20px;padding:8px 2px 4px;}
+.donut{flex:none;position:relative;width:140px;height:140px;}
+.donut svg{width:140px;height:140px;transform:rotate(-90deg);}
+.donut .donut-c{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;transform:none;}
+.donut .donut-c b{font-family:var(--font-num);font-size:24px;font-weight:700;line-height:1;}
+.donut .donut-c span{font-size:10px;color:var(--muted);margin-top:4px;text-transform:uppercase;letter-spacing:.5px;}
+.donut-legend{flex:1;display:flex;flex-direction:column;gap:9px;min-width:0;}
+.dl-row{display:flex;align-items:center;gap:9px;font-size:12px;color:var(--text);font-weight:600;}
+.dl-dot{width:11px;height:11px;border-radius:4px;flex:none;}
+.dl-row b{margin-left:auto;font-family:var(--font-num);font-weight:700;font-size:13px;}
+.dl-row span.pct{font-size:10.5px;color:var(--muted);font-family:var(--font-num);min-width:34px;text-align:right;}
 .chart-wrap h4{font-family:var(--font-head);font-size:12px;font-weight:600;margin-bottom:14px;}
 .chart{display:flex;align-items:flex-end;gap:7px;height:96px;}
 .chart .bar{flex:1;border-radius:7px 7px 3px 3px;background:linear-gradient(180deg,rgba(99,229,255,.25),rgba(99,229,255,.55));min-height:5px;position:relative;transition:height .5s var(--ease);}
@@ -2073,11 +2084,8 @@ const ADMIN_SECTIONS = [
   {id:'products',label:'📦 Товары'},
   {id:'cats',    label:'🗂 Категории'},
   {id:'banners', label:'🖼 Баннеры'},
-  {id:'clients', label:'👥 Клиенты'},
-  {id:'settings',label:'⚙️ Настройки'},
   {id:'db',      label:'🗄 JSONBin'},
-  {id:'data',    label:'💾 Данные'},
-  {id:'logs',    label:'📋 Журнал'}
+  {id:'data',    label:'💾 Данные'}
 ];
 const ORDER_STATUS = {
   new:       {label:'Новый',       color:'#63e5ff', bg:'rgba(99,229,255,.14)'},
@@ -2133,57 +2141,62 @@ function renderAdmin(){
   else if(adminTab==='products'){ body.innerHTML = adminProductsHTML(); wireAdminProducts(); }
   else if(adminTab==='cats'){ body.innerHTML = adminCatsHTML(); wireAdminCats(); }
   else if(adminTab==='banners'){ body.innerHTML = adminBannersHTML(); wireAdminBanners(); }
-  else if(adminTab==='clients'){ body.innerHTML = adminClientsHTML(); wireAdminClients(); }
-  else if(adminTab==='settings'){ body.innerHTML = adminSettingsHTML(); wireAdminSettings(); }
   else if(adminTab==='db'){ body.innerHTML = adminDBHTML(); wireAdminDB(); }
   else if(adminTab==='data'){ body.innerHTML = adminDataHTML(); wireAdminData(); }
-  else if(adminTab==='logs'){ body.innerHTML = adminLogsHTML(); wireAdminLogs(); }
 }
 
 /* ---- Дашборд ---- */
 function adminDashHTML(){
-  const active = localOrders.filter(o=>o.status==='paid'); /* бухгалтерия: только оплаченные */
-  const revenue = active.reduce((s,o)=>s+(o.total||0),0);
-  const avg = active.length ? Math.round(revenue/active.length) : 0;
+  const paid = localOrders.filter(o=>o.status==='paid');
+  const revenue = paid.reduce((s,o)=>s+(o.total||0),0);
+  const feeSum = paid.reduce((s,o)=>s+(o.transferFee||0),0);
   const today = new Date().toDateString();
-  const todayCount = localOrders.filter(o=>new Date(o.createdAt).toDateString()===today).length;
-  const newCount = localOrders.filter(o=>o.status==='new').length;
-  const clients = adminClientList().length;
-  const stat = (l,v)=>`<div class="astat glass"><span>${l}</span><b>${v}</b></div>`;
-  const paidOrders = localOrders.filter(o=>o.status==='paid');
-  const feeSum = paidOrders.reduce((s,o)=>s+(o.transferFee||0),0);
-  const delSum = paidOrders.reduce((s,o)=>s+(o.delivery||0),0);
-  const goodsSum = paidOrders.reduce((s,o)=>s+((o.total||0)-(o.transferFee||0)-(o.delivery||0)),0);
-  const days=[]; for(let i=6;i>=0;i--){ const d=new Date(); d.setDate(d.getDate()-i); days.push(d); }
-  const sums = days.map(d=> localOrders.filter(o=>new Date(o.createdAt).toDateString()===d.toDateString() && o.status==='paid').reduce((s,o)=>s+(o.total||0),0));
-  const max = Math.max(...sums, 1);
-  const dw = ['Вс','Пн','Вт','Ср','Чт','Пт','Сб'];
-  const bars = days.map((d,i)=>`<div class="bar ${i===6?'hi':''}" style="height:${Math.max(4, Math.round(sums[i]/max*100))}%"><span>${dw[d.getDay()]}</span></div>`).join('');
-  const recent = localOrders.slice(0,5).map(o=>`
-    <div class="admin-row glass">
-      <div class="ric">${o.method==='pickup'?'🏃':'🛵'}</div>
-      <div class="rmain"><b>${esc(o.customer ? o.customer.name : '—')} · ${fmt(o.total||0)}</b><span>${esc(o.id)} · ${new Date(o.createdAt).toLocaleString('ru-RU')}</span></div>
-      ${statusChip(o.status)}
-    </div>`).join('');
+  const todayOrders = localOrders.filter(o=>new Date(o.createdAt).toDateString()===today);
+  const paidToday = todayOrders.filter(o=>o.status==='paid');
+  const revToday = paidToday.reduce((s,o)=>s+(o.total||0),0);
+  const avg = paid.length ? Math.round(revenue/paid.length) : 0;
+  const avgToday = paidToday.length ? Math.round(revToday/paidToday.length) : 0;
+  const stat = (l,v,w)=>`<div class="astat glass"${w?' style="grid-column:1/-1;"':''}><span>${l}</span><b>${v}</b></div>`;
+
+  /* пирог заказов по статусам */
+  const counts = Object.keys(ORDER_STATUS).map(k=>({ k, n:localOrders.filter(o=>o.status===k).length })).filter(s=>s.n>0);
+  const totalOrders = localOrders.length;
+  let segs = '', off = 0;
+  const R = 52, CIRC = 2*Math.PI*R;
+  if(totalOrders){
+    segs = counts.map(s=>{
+      const len = s.n/totalOrders*CIRC;
+      const el = `<circle r="${R}" cx="70" cy="70" fill="none" stroke="${ORDER_STATUS[s.k].color}" stroke-width="20" stroke-dasharray="${Math.max(.5, len-1.6).toFixed(2)} ${(CIRC-len+1.6).toFixed(2)}" stroke-dashoffset="${(-off).toFixed(2)}"/>`;
+      off += len;
+      return el;
+    }).join('');
+  } else {
+    segs = `<circle r="${R}" cx="70" cy="70" fill="none" stroke="rgba(255,255,255,.07)" stroke-width="20"/>`;
+  }
+  const legend = counts.length
+    ? counts.map(s=>`<div class="dl-row"><span class="dl-dot" style="background:${ORDER_STATUS[s.k].color}"></span>${STATUS_EMOJI[s.k]||''} ${ORDER_STATUS[s.k].label}<b>${s.n}</b><span class="pct">${Math.round(s.n/totalOrders*100)}%</span></div>`).join('')
+    : '<p class="note">Заказов пока нет</p>';
+
   return `<div class="admin-stats">
-      ${stat('Заказов всего', localOrders.length)}
-      ${stat('Новых заказов', newCount)}
-      ${stat('Выручка', fmt(revenue))}
+      ${stat('Всего заказов', totalOrders)}
+      ${stat('Заказов сегодня', todayOrders.length)}
+      ${stat('Общая выручка', fmt(revenue))}
+      ${stat('Выручка за сегодня', fmt(revToday))}
       ${stat('Средний чек', fmt(avg))}
-      ${stat('Заказов сегодня', todayCount)}
-      ${stat('Клиентов', clients)}
+      ${stat('Средний чек за сегодня', fmt(avgToday))}
+      ${stat('Выручка с комиссии', fmt(feeSum), true)}
     </div>
-    <div class="chart-wrap glass" style="margin-top:12px;">
-      <h4>📒 Бухгалтерия · оплаченные заказы</h4>
-      <div class="sum-row"><span>Товары</span><span>${fmt(goodsSum)}</span></div>
-      <div class="sum-row"><span>Заработано с доставки</span><span>${fmt(delSum)}</span></div>
-      <div class="sum-row"><span>Заработано с комиссии</span><span>${fmt(feeSum)}</span></div>
-      <div class="sum-divider"></div>
-      <div class="sum-total"><span>Всего</span><b>${fmt(goodsSum + delSum + feeSum)}</b></div>
-    </div>
-    <div class="chart-wrap glass"><h4>Выручка за 7 дней (оплаченные)</h4><div class="chart">${bars}</div><p class="note" style="margin-top:14px;">💰 В выручку и средний чек попадают только заказы в статусе «Оплачен»</p></div>
-    <div style="padding:18px 0 6px;" class="section-head"><h2>Последние заказы</h2></div>
-    ${recent || '<p class="note">Заказов пока нет</p>'}`;
+    <div class="chart-wrap glass">
+      <h4>🍩 Заказы по статусам</h4>
+      <div class="donut-wrap">
+        <div class="donut">
+          <svg viewBox="0 0 140 140">${segs}</svg>
+          <div class="donut-c"><b>${totalOrders}</b><span>заказов</span></div>
+        </div>
+        <div class="donut-legend">${legend}</div>
+      </div>
+      <p class="note" style="margin-top:12px;">💰 Выручка, средний чек и комиссия — только оплаченные заказы</p>
+    </div>`;
 }
 
 /* ---- Заказы ---- */
@@ -2516,69 +2529,6 @@ function wireAdminBanners(){
   }));
 }
 
-/* ---- Клиенты ---- */
-function adminClientList(){
-  const map = {};
-  localOrders.forEach(o=>{
-    if(!o.customer) return;
-    const k = o.customer.telegram || o.customer.phone || 'anon';
-    const c = map[k] || (map[k] = { name:o.customer.name, tg:o.customer.telegram, phone:o.customer.phone, count:0, spent:0, last:o.createdAt });
-    c.count++; c.spent += (o.status==='paid' ? (o.total||0) : 0);
-    if(new Date(o.createdAt) > new Date(c.last)) c.last = o.createdAt;
-    if(o.customer.name) c.name = o.customer.name;
-  });
-  return Object.values(map).sort((a,b)=>b.spent-a.spent);
-}
-function adminClientsHTML(){
-  const list = adminClientList();
-  if(!list.length) return emptyHTML('👥','Клиентов нет','Появятся после первых заказов');
-  const rows = list.map(c=>`
-    <div class="admin-row glass">
-      <div class="ric">🧑</div>
-      <div class="rmain"><b>${esc(c.name)} ${c.tg?esc(c.tg):''}</b><span>${esc(c.phone||'')} · заказов: ${c.count} · ${fmt(c.spent)}</span></div>
-    </div>`).join('');
-  return rows;
-}
-function wireAdminClients(){}
-
-/* ---- Настройки магазина ---- */
-function adminSettingsHTML(){
-  return `<div class="admin-form glass">
-      <div class="chk-field"><div class="chk-label">Название магазина</div><input class="chk-input" id="st_name" value="${esc(settings.shopName)}"></div>
-      <div class="chk-field"><div class="chk-label">Доставка, ₽</div><input class="chk-input" id="st_delivery" type="number" inputmode="numeric" value="${settings.deliveryPrice}"></div>
-      <div class="chk-field"><div class="chk-label">Ссылка поддержки (Telegram)</div><input class="chk-input" id="st_support" value="${esc(settings.supportLink)}" placeholder="https://t.me/username"></div>
-      <div class="chk-field"><div class="chk-label">Уведомления · Bot Token</div><input class="chk-input" id="st_bot" type="password" value="${esc(settings.botToken||'')}" placeholder="токен от @BotFather (или в начале файла)"></div>
-      <div class="chk-field"><div class="chk-label">Username бота (для реф-ссылок)</div><input class="chk-input" id="st_botuser" value="${esc(settings.botUsername||'')}" placeholder="например cloudlab_shop_bot"></div>
-      <div class="chk-field"><div class="chk-label">Уведомления · ID администратора</div><input class="chk-input" id="st_adminid" type="text" inputmode="numeric" value="${esc(settings.adminChatId || CONFIG.ADMIN_CHAT_ID || '')}" placeholder="твой Telegram ID">
-        <div class="note" style="margin-top:6px;">Сюда приходят уведомления о новых заказах. Твой ID: <b>${(()=>{ const u=getTgUser(); return u ? u.id : 'виден после запуска в Telegram'; })()}</b></div></div>
-      <div class="cancel-btn" id="st_testmsg" style="justify-content:center;margin-bottom:4px;">📨 Отправить тестовое уведомление</div>
-      <div class="chk-field"><div class="chk-label">Новый пароль админки (4 цифры)</div><input class="chk-input" id="st_pass" type="password" inputmode="numeric" maxlength="4" placeholder="оставь пустым, чтобы не менять"></div>
-      <div class="chk-submit" id="st_save" style="padding:14px;">Сохранить настройки</div>
-    </div>
-    <p class="note">Пароль по умолчанию — 0383. Вход в админку: 7 нажатий по тексту «CLOUD LAB» в шапке главной за 5 секунд.</p>`;
-}
-function wireAdminSettings(){
-  document.getElementById('st_save').addEventListener('click', ()=>{
-    const name = document.getElementById('st_name').value.trim() || 'CLOUD LAB';
-    settings.shopName = name;
-    settings.deliveryPrice = parseInt(document.getElementById('st_delivery').value,10)||0;
-    settings.supportLink = document.getElementById('st_support').value.trim();
-    settings.botToken = document.getElementById('st_bot').value.trim();
-    settings.botUsername = document.getElementById('st_botuser').value.trim().replace(/^@/,'');
-    settings.adminChatId = document.getElementById('st_adminid').value.trim();
-    const np = document.getElementById('st_pass').value.trim();
-    if(np){ if(/^\d{4}$/.test(np)){ localStorage.setItem('cl_admin_pass', np); toast('Пароль обновлён','🔑'); } else toast('Пароль — 4 цифры','⚠️'); }
-    logAction('Настройки магазина обновлены');
-    saveAllLocal(); syncCloud(); refreshShopUI(); renderAdmin();
-    toast('Настройки сохранены','✓');
-  });
-  document.getElementById('st_testmsg').addEventListener('click', async ()=>{
-    const res = await tgSendMessage(adminChatId(), `✅ <b>${esc(settings.shopName)}</b>\nУведомления работают!`);
-    toast(res.ok ? 'Уведомление отправлено!' : 'Не удалось: ' + (res.reason||''), res.ok?'✅':'⚠️');
-    logAction(res.ok ? 'Тестовое уведомление отправлено' : 'Тестовое уведомление не доставлено ('+(res.reason||'')+')');
-  });
-}
-
 /* ---- JSONBin ---- */
 function adminDBHTML(){
   const ready = DB.ready;
@@ -2698,17 +2648,6 @@ function wireAdminData(){
   });
 }
 
-/* ---- Журнал ---- */
-function adminLogsHTML(){
-  const rows = adminLogs.map(l=>`<div class="log-line"><b>${new Date(l.t).toLocaleString('ru-RU')}</b> — ${esc(l.text)}</div>`).join('');
-  return `<div class="mini-btn danger" id="logs_clear" style="display:inline-flex;margin-bottom:14px;">Очистить журнал</div>
-    ${rows || '<p class="note">Пока пусто</p>'}`;
-}
-function wireAdminLogs(){
-  const b = document.getElementById('logs_clear');
-  if(b) b.addEventListener('click', ()=>{ adminLogs=[]; LS.set('cl_logs', adminLogs); renderAdmin(); toast('Журнал очищен','🗑'); });
-}
-
 /* ===================== INIT ===================== */
 document.title = settings.shopName;
 const _bn = document.getElementById('brandName'); if(_bn) _bn.textContent = settings.shopName;
@@ -2733,5 +2672,5 @@ if(DB.ready){
   DB.read().then(doc=>{ if(doc && typeof doc==='object' && !Array.isArray(doc)) applyCloudDoc(doc, false); processRefPending(); }).catch(()=>{});
 }
 </script>
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a3a9c62f3e669847',t:'MTc4OTMzMDAwNA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a3aa8868aa42289c',t:'MTc4OTMzNzk1OQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
