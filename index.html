@@ -295,10 +295,18 @@ textarea.chk-input{resize:none;min-height:74px;line-height:1.5;}
 .ref-code-box b{font-family:var(--font-num);font-size:16px;letter-spacing:2px;color:var(--cyan);}
 .ref-code-box span{font-size:11px;color:var(--muted);}
 .ref-share-btn{width:100%;background:var(--grad);color:#08080b;font-weight:700;font-size:13px;padding:14px;border-radius:16px;display:flex;align-items:center;justify-content:center;gap:8px;}
+.ref-share-btn svg{width:15px;height:15px;stroke:#08080b;flex-shrink:0;}
 .ref-stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:18px 20px 0;}
 
 /* ===== ADMIN PANEL ===== */
 .admin-tabs{display:flex;gap:7px;overflow-x:auto;padding:14px 20px 6px;-webkit-overflow-scrolling:touch;}
+.vgroup{border-radius:16px;padding:12px;margin-bottom:10px;}
+.vg-head{display:flex;gap:8px;align-items:center;margin-bottom:9px;}
+.vg-head .vg-label{flex:1.3;}
+.vg-head .vg-type{flex:1;font-size:12px;}
+.vg-opt{display:flex;gap:8px;align-items:center;margin-bottom:7px;}
+.vg-opt .vg-name{flex:1;}
+.vg-opt .vg-stock{width:76px;flex:none;}
 .admin-tab{flex-shrink:0;padding:10px 15px;border-radius:14px;font-size:11.5px;font-weight:700;color:var(--muted);background:rgba(255,255,255,.05);border:1px solid var(--glass-brd);white-space:nowrap;font-family:var(--font-body);transition:all .25s var(--smooth);}
 .admin-tab.active{background:var(--grad);color:#08080b;border-color:transparent;}
 .admin-body{padding:12px 20px 46px;}
@@ -365,9 +373,9 @@ textarea.chk-input{resize:none;min-height:74px;line-height:1.5;}
 .nav-btn .label{max-width:0;min-width:0;width:0;overflow:hidden;opacity:0;white-space:nowrap;font-size:10px;font-weight:700;line-height:1;transition:max-width .55s var(--nav-ease), opacity .35s var(--smooth) .1s, margin .55s var(--nav-ease);}
 .nav-btn.active{color:var(--text);}
 .nav-btn.active .label{max-width:82px;width:auto;opacity:1;margin-left:6px;}
-.nav-btn.tint-cyan.active{background:linear-gradient(135deg, rgba(99,229,255,.22), rgba(99,229,255,.06));color:var(--cyan);}
-.nav-btn.tint-pink.active{background:linear-gradient(135deg, rgba(255,91,154,.22), rgba(255,91,154,.06));color:var(--pink);}
-.nav-btn.tint-violet.active{background:linear-gradient(135deg, rgba(164,118,255,.22), rgba(164,118,255,.06));color:var(--violet);}
+.nav-btn.tint-cyan.active{color:var(--cyan);}
+.nav-btn.tint-pink.active{color:var(--pink);}
+.nav-btn.tint-violet.active{color:var(--violet);}
 .nav-badge{position:absolute;top:-5px;right:-3px;min-width:18px;height:18px;padding:0 5px;border-radius:99px;background:var(--pink);color:#fff;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;line-height:1;}
 .nav-avatar{width:19px;height:19px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:9.5px;font-weight:800;color:#08080b;flex-shrink:0;}
 
@@ -410,6 +418,11 @@ textarea.chk-input{resize:none;min-height:74px;line-height:1.5;}
 .selflav-row .rm{width:24px;height:24px;border-radius:8px;background:rgba(255,91,122,.12);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 .selflav-row .rm svg{width:10px;height:10px;stroke:var(--pink);}
 .multi-hint{font-size:10.5px;color:var(--muted2);margin-top:8px;}
+.qty-inp{width:38px;text-align:center;background:none;border:none;outline:none;color:var(--text);font-family:var(--font-num);font-size:13px;font-weight:600;-moz-appearance:textfield;appearance:textfield;}
+.qty-inp::-webkit-outer-spin-button,.qty-inp::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
+.flavor-chip.soldout,.strength-chip.soldout{opacity:.35;pointer-events:none;}
+.stk-out{font-size:10px;color:var(--pink);font-weight:700;margin-left:3px;}
+.stk-low{font-size:10px;color:var(--muted);font-weight:700;margin-left:3px;}
 
 .sheet-bottom-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:6px;}
 .sheet-buy{flex:1;background:var(--grad);color:#08080b;font-weight:700;font-size:13.5px;padding:14px 18px;border-radius:16px;display:flex;align-items:center;justify-content:center;gap:8px;}
@@ -572,7 +585,7 @@ textarea.chk-input{resize:none;min-height:74px;line-height:1.5;}
       <div class="ref-hero glass">
         <div class="emoji">🎁</div>
         <h2>Дари 200 баллов друзьям</h2>
-        <p>Друг получит <b>200 баллов (= 20 ₽)</b> после первого заказа, а ты — столько же за каждого приглашённого</p>
+        <p>Друг получит <b>200 баллов (= 20 ₽)</b> после оплаты первого заказа, а ты — столько же за каждого приглашённого</p>
         <div class="ref-code-box">
           <div><span>Твой код</span><br><b id="refCodeVal">CLOUD-4821</b></div>
           <div class="gbtn" id="copyRefBtn" style="background:rgba(99,229,255,.12);width:36px;height:36px;"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg></div>
@@ -632,7 +645,7 @@ textarea.chk-input{resize:none;min-height:74px;line-height:1.5;}
   <div class="sheet-bottom-row" id="sheetBottomRow">
     <div class="qty-mini" id="singleQtyBlock">
       <button id="sheetQtyMinus"><svg viewBox="0 0 24 24"><path d="M5 12h14"/></svg></button>
-      <span id="sheetQtyVal">1</span>
+      <input class="qty-inp" id="sheetQtyInp" type="number" inputmode="numeric" min="1" max="10" value="1">
       <button id="sheetQtyPlus"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
     </div>
     <div class="sheet-buy" id="sheetBuy">В корзину</div>
@@ -1015,6 +1028,7 @@ function applyCloudDoc(doc, silent){
     const bn = document.getElementById('brandName'); if(bn) bn.textContent = settings.shopName;
   }
   return changed;
+  processRefPending();
 }
 
 /* ===================== PRODUCTS DATA ===================== */
@@ -1215,8 +1229,10 @@ function setSegment(catKey, animate){
   if(!items.length) return;
   const target = items.find(i=>i.dataset.cat===catKey) || items[0];
   items.forEach(i=>i.classList.toggle('active', i===target));
+  if(!animate) segThumb.style.transition = 'none';
   segThumb.style.left = target.offsetLeft + 'px';
   segThumb.style.width = target.offsetWidth + 'px';
+  if(!animate){ void segThumb.offsetWidth; requestAnimationFrame(()=>{ segThumb.style.transition = ''; }); }
   try{ target.scrollIntoView({behavior: animate ? 'smooth':'auto', inline:'center', block:'nearest'}); }catch(e){}
 }
 function renderSegments(){
@@ -1543,21 +1559,30 @@ function submitOrder(){
     comment,
     status: 'new',
     tgUser: getTgUser(),
+    creatorCode: myRefCode(),
     clientChatId: (()=>{ const u = getTgUser(); return u ? u.id : null; })()
   };
   localOrders.unshift(order); LS.set('cl_orders', localOrders);
+  /* списание остатков по выбранным вариантам */
+  let stockChanged = false;
+  Object.values(state.cart).forEach(it=>{
+    (it.sel||[]).forEach(pair=>{
+      const gi = pair[0], oi = pair[1], q = pair[2];
+      const prod = products.find(x=>String(x.id)===String(it.id));
+      const opt = prod && prod.groups && prod.groups[gi] && prod.groups[gi].options[oi];
+      if(opt && typeof opt.stock === 'number' && opt.stock > 0){
+        opt.stock = Math.max(0, opt.stock - q); stockChanged = true;
+      }
+    });
+  });
+  if(stockChanged) saveAllLocal();
   /* списание баллов */
   if(pointsUsed) setPoints(getPoints() - pointsUsed);
-  /* реферальный бонус за первый заказ */
+  /* реферальный бонус: другу — только после ОПЛАТЫ первого заказа (processRefPending) */
   const inviter = invitedByCode();
-  let refBonus = 0;
   if(inviter && localStorage.getItem('cl_ref_first_done') !== '1'){
     localStorage.setItem('cl_ref_first_done', '1');
-    refBonus = REF_BONUS;
-    setPoints(getPoints() + refBonus);
-    const outbox = LS.get('cl_ref_outbox', []);
-    outbox.push({ id:'ref' + Date.now(), code: inviter, byName: name, byTg: tg, at: new Date().toISOString() });
-    LS.set('cl_ref_outbox', outbox);
+    LS.set('cl_ref_pending', { code: inviter, byName: name, byTg: tg, at: new Date().toISOString() });
   }
   syncCloud(true);
   logAction('Новый заказ ' + order.id + ' · ' + fmt(order.total) + (pointsUsed ? ' · баллы −' + pointsUsed : ''));
@@ -1665,7 +1690,29 @@ document.getElementById('geoAddrBtn').addEventListener('click', detectAddress);
 /* ===================== REFERRAL ===================== */
 function renderReferral(){
   document.getElementById('refCodeVal').textContent = myRefCode();
+  processRefPending();
   creditNewReferrals(LS.get('cl_ref_cache', []));
+}
+/* начисление реф-бонуса другу — только когда его заказ получил статус «Оплачен» */
+function processRefPending(){
+  const pend = LS.get('cl_ref_pending', null);
+  if(!pend || !pend.code) return;
+  if(localStorage.getItem('cl_ref_paid_done') === '1') return;
+  const me = getTgUser();
+  const isMine = o => (o.creatorCode && o.creatorCode === myRefCode()) || (me && o.tgUser && o.tgUser.id && String(o.tgUser.id) === String(me.id));
+  if(!localOrders.some(o => o.status === 'paid' && isMine(o))) return;
+  localStorage.setItem('cl_ref_paid_done', '1');
+  setPoints(getPoints() + REF_BONUS);
+  toast('+' + REF_BONUS + ' баллов за первый заказ!','🎁');
+  logAction('Реферальный бонус: +' + REF_BONUS);
+  const rid = 'ref-' + (me && me.id ? ('tg' + me.id) : myRefCode());
+  const outbox = LS.get('cl_ref_outbox', []);
+  if(!outbox.some(r=>r.id===rid)){
+    outbox.push({ id: rid, code: pend.code, byName: pend.byName, byTg: pend.byTg, at: new Date().toISOString() });
+    LS.set('cl_ref_outbox', outbox);
+  }
+  LS.set('cl_ref_pending', null);
+  syncCloud(true);
 }
 function botUsername(){ return String(settings.botUsername || CONFIG.BOT_USERNAME || '').trim().replace(/^@/,''); }
 function openReferral(){ haptic('light'); goto('referral'); renderReferral(); pushLayer('referral', ()=>goto('profile')); }
@@ -1680,7 +1727,7 @@ document.getElementById('shareRefBtn').addEventListener('click', ()=>{
   const code = myRefCode();
   const bu = botUsername();
   const link = bu ? ('https://t.me/' + bu + '?start=' + code) : '';
-  const text = encodeURIComponent(`Заходи в Cloud Lab 🛒 Мой код: ${code} — с ним ты получишь 200 баллов (20 ₽) после первого заказа! 🎁`);
+  const text = encodeURIComponent(`Заходи в Cloud Lab 🛒 Мой код: ${code} — с ним мы оба получим бонусы после первого заказа! 🎁`);
   try{ Telegram.WebApp.openTelegramLink('https://t.me/share/url?url=' + encodeURIComponent(link) + '&text=' + text); }
   catch(e){ toast('Код для друга: ' + code,'🎁'); }
 });
@@ -1708,7 +1755,7 @@ function openSheet(p){
   document.getElementById('sheetDesc').textContent = p.desc;
 
   document.getElementById('singleQtyBlock').style.display = (p.groups||[]).length === 0 ? 'flex' : 'none';
-  document.getElementById('sheetQtyVal').textContent = sheetQty;
+  document.getElementById('sheetQtyInp').value = sheetQty;
 
   renderVariantGroups();
   updateSheetPrice();
@@ -1722,7 +1769,8 @@ function renderVariantGroups(){
   const container = document.getElementById('sheetVariants');
   container.innerHTML = '';
   const groups = activeProduct.groups || [];
-  const withGroupNames = groups.length > 1; /* если групп несколько — в подпись добавляем имя группы */
+  const withGroupNames = groups.length > 1;
+  const optStock = (g, oi)=>{ const o = g.options[oi]; return (o && typeof o.stock === 'number') ? o.stock : null; };
   groups.forEach((g, gi)=>{
     if(!multiSelections[gi]) multiSelections[gi] = {};
     const sel = multiSelections[gi];
@@ -1738,11 +1786,14 @@ function renderVariantGroups(){
     g.options.forEach((opt, oi)=>{
       const isOn = sel.hasOwnProperty(oi);
       const isSwatch = g.type === 'swatch';
+      const st = optStock(g, oi);
+      const sold = st !== null && st <= 0;
       const el = document.createElement('button');
-      el.className = (isSwatch ? 'flavor-chip' : 'strength-chip') + (isOn ? ' active' : '');
+      el.className = (isSwatch ? 'flavor-chip' : 'strength-chip') + (isOn ? ' active' : '') + (sold ? ' soldout' : '');
       el.innerHTML = (isSwatch ? `<span class="dot" style="background:${opt.color}"></span>${opt.name}` : `${opt}`)
+        + (sold ? '<span class="stk-out">нет</span>' : (st !== null && st <= 5 ? `<span class="stk-low">${st}</span>` : ''))
         + ` <svg class="check" viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" style="width:13px;height:13px;display:${isOn?'inline':'none'};stroke:var(--cyan);vertical-align:middle;"><path d="M20 6 9 17l-5-5"/></svg>`;
-      el.addEventListener('click', ()=>{
+      if(!sold) el.addEventListener('click', ()=>{
         haptic('light');
         if(sel.hasOwnProperty(oi)) delete sel[oi];
         else sel[oi] = 1;
@@ -1759,6 +1810,7 @@ function renderVariantGroups(){
       selKeys.forEach(oiStr=>{
         const oi = +oiStr;
         const opt = g.options[oi];
+        const st = optStock(g, oi);
         const name = (typeof opt === 'string') ? opt : opt.name;
         const rowEl = document.createElement('div');
         rowEl.className = 'selflav-row';
@@ -1766,7 +1818,7 @@ function renderVariantGroups(){
           <span class="name">${withGroupNames ? esc(g.label) + ': ' : ''}${esc(name)}</span>
           <div class="qty-mini">
             <button class="mm"><svg viewBox="0 0 24 24"><path d="M5 12h14"/></svg></button>
-            <span>${sel[oi]}</span>
+            <input class="qty-inp" type="number" inputmode="numeric" min="1" ${st!==null?`max="${st}"`:''} value="${sel[oi]}">
             <button class="pp"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
           </div>
           <div class="rm"><svg viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></div>`;
@@ -1776,7 +1828,15 @@ function renderVariantGroups(){
           renderVariantGroups(); updateSheetPrice();
         });
         rowEl.querySelector('.pp').addEventListener('click', ()=>{
+          if(st !== null && sel[oi] >= st){ toast('В наличии: ' + st,'⚠️'); return; }
           haptic('light'); sel[oi]++;
+          renderVariantGroups(); updateSheetPrice();
+        });
+        rowEl.querySelector('.qty-inp').addEventListener('change', (e)=>{
+          let v = parseInt(e.target.value, 10) || 1;
+          if(st !== null) v = Math.min(v, st);
+          v = Math.max(1, v);
+          sel[oi] = v;
           renderVariantGroups(); updateSheetPrice();
         });
         rowEl.querySelector('.rm').addEventListener('click', ()=>{
@@ -1805,11 +1865,16 @@ function updateSheetPrice(){
 
 document.getElementById('sheetQtyMinus').addEventListener('click', ()=>{
   if(sheetQty<=1) return; haptic('light'); sheetQty--;
-  document.getElementById('sheetQtyVal').textContent = sheetQty; updateSheetPrice();
+  document.getElementById('sheetQtyInp').value = sheetQty; updateSheetPrice();
 });
 document.getElementById('sheetQtyPlus').addEventListener('click', ()=>{
   if(sheetQty>=10) return; haptic('light'); sheetQty++;
-  document.getElementById('sheetQtyVal').textContent = sheetQty; updateSheetPrice();
+  document.getElementById('sheetQtyInp').value = sheetQty; updateSheetPrice();
+});
+document.getElementById('sheetQtyInp').addEventListener('change', ()=>{
+  const v = parseInt(document.getElementById('sheetQtyInp').value, 10);
+  sheetQty = Math.max(1, Math.min(10, v || 1));
+  document.getElementById('sheetQtyInp').value = sheetQty; updateSheetPrice();
 });
 
 document.getElementById('sheetBuy').addEventListener('click', ()=>{
@@ -1828,17 +1893,23 @@ document.getElementById('sheetBuy').addEventListener('click', ()=>{
       Object.keys(sel).forEach(oiStr=>{
         const oi = +oiStr;
         const opt = g.options[oi]; if(!opt) return;
+        const st = (typeof opt.stock === 'number') ? opt.stock : null;
+        let qty = sel[oi];
+        if(st !== null) qty = Math.min(qty, st);
+        if(qty <= 0) return;
         const name = (typeof opt === 'string') ? opt : opt.name;
         const label = withGroupNames ? (g.label + ': ' + name) : name;
         const cartKey = activeProduct.id + '|' + label;
         if(!state.cart[cartKey]){
           state.cart[cartKey] = { id:activeProduct.id, title:activeProduct.title, variantLabel:label,
-            price:activeProduct.price, qty:0, img:activeProduct.img, ph:activeProduct.ph };
+            price:activeProduct.price, qty:0, img:activeProduct.img, ph:activeProduct.ph, sel:[] };
         }
-        state.cart[cartKey].qty += sel[oi];
+        state.cart[cartKey].qty += qty;
+        state.cart[cartKey].sel.push([gi, oi, qty]);
         lines++;
       });
     });
+    if(!lines){ toast('Выбранных вариантов нет в наличии','⚠️'); return; }
     haptic('medium');
     toast(lines > 1 ? ('Добавлено позиций: ' + lines) : 'Добавлено в корзину','🛒');
   } else {
@@ -1846,7 +1917,7 @@ document.getElementById('sheetBuy').addEventListener('click', ()=>{
     const cartKey = activeProduct.id + '|' + label;
     if(!state.cart[cartKey]){
       state.cart[cartKey] = { id:activeProduct.id, title:activeProduct.title, variantLabel:label,
-        price:activeProduct.price, qty:0, img:activeProduct.img, ph:activeProduct.ph };
+        price:activeProduct.price, qty:0, img:activeProduct.img, ph:activeProduct.ph, sel:[] };
     }
     state.cart[cartKey].qty += sheetQty;
     haptic('medium');
@@ -1872,6 +1943,7 @@ function goto(screenName){
     if(nb) nb.classList.add('active');
     updateNavThumb();
   }
+  if(screenName==='catalog') setSegment(currentCat, false);
   if(screenName==='cart') renderCart();
   if(screenName==='profile') updateProfile();
   updateCartUI(); window.scrollTo(0,0);
@@ -1883,7 +1955,7 @@ document.querySelectorAll('.nav-btn').forEach(item=>{
 });
 /* размеры кнопок фиксированы в CSS (padding 15+15, иконка 19, gap 4) */
 const NAV_GEO = { padX:30, icon:19, gap:4, barPad:7, labelGap:6, labelMax:82 };
-function updateNavThumb(){
+function updateNavThumb(noAnim){
   const thumb = document.getElementById('navThumb');
   const act = document.querySelector('.nav-btn.active');
   if(!thumb || !act) return;
@@ -1893,8 +1965,10 @@ function updateNavThumb(){
   for(const b of btns){ if(b === act) break; left += NAV_GEO.padX + NAV_GEO.icon + NAV_GEO.gap; }
   const label = act.querySelector('.label');
   const labelW = label ? Math.min(label.scrollWidth || 0, NAV_GEO.labelMax) : 0;
+  if(noAnim) thumb.style.transition = 'none';
   thumb.style.left = left + 'px';
   thumb.style.width = (NAV_GEO.padX + NAV_GEO.icon + (labelW ? NAV_GEO.labelGap + labelW : 0)) + 'px';
+  if(noAnim){ void thumb.offsetWidth; requestAnimationFrame(()=>{ thumb.style.transition = ''; }); }
 }
 
 /* SEARCH */
@@ -2191,12 +2265,44 @@ function wireAdminOrders(){
 
 /* ---- Товары ---- */
 let editProductId = null;
+let editGroups = [];
+function editGroupsHTML(){
+  if(!editGroups.length) return '<p class="note">Вариантов нет — товар продаётся без выбора (только количество).</p>';
+  return editGroups.map((g, gi)=>`
+    <div class="vgroup glass">
+      <div class="vg-head">
+        <input class="chk-input vg-label" data-g="${gi}" value="${esc(g.label)}" placeholder="Название: Вкус, Цвет…">
+        <select class="chk-input vg-type" data-g="${gi}">
+          <option value="swatch" ${g.type!=='chip'?'selected':''}>🎨 С цветными точками</option>
+          <option value="chip" ${g.type==='chip'?'selected':''}>🏷 Обычные чипы</option>
+        </select>
+        <div class="rbtn" data-gdel="${gi}">🗑</div>
+      </div>
+      <div class="vg-opts">
+        ${g.options.map((o, oi)=>`
+          <div class="vg-opt">
+            ${g.type!=='chip' ? `<input type="color" class="cat-color vg-color" data-g="${gi}" data-o="${oi}" value="${o.color||'#63e5ff'}">` : ''}
+            <input class="chk-input vg-name" data-g="${gi}" data-o="${oi}" value="${esc(o.name)}" placeholder="Название варианта">
+            <input class="chk-input vg-stock" data-g="${gi}" data-o="${oi}" type="number" inputmode="numeric" value="${(o.stock===''||o.stock===undefined||o.stock===null)?'':o.stock}" placeholder="∞">
+            <div class="rbtn" data-odel="${gi}:${oi}">✕</div>
+          </div>`).join('')}
+        <div class="mini-btn" data-oadd="${gi}">＋ Вариант</div>
+      </div>
+    </div>`).join('');
+}
 function catEmoji(key){ const c = categories.find(x=>x.key===key); return c ? c.emoji : '🏷'; }
 function adminProductsHTML(){
   if(editProductId !== null){
     const isNew = editProductId === 'new';
     const p = isNew ? {id:Date.now(), cat:categories[0]?categories[0].key:'', title:'', desc:'', price:0, img:'', ph:'ph1', groups:[]} : products.find(x=>String(x.id)===String(editProductId));
     if(!p){ editProductId=null; return adminProductsHTML(); }
+    editGroups = (p.groups||[]).map(g=>({
+      label: g.label||'',
+      type: g.type==='chip' ? 'chip' : 'swatch',
+      options: (g.options||[]).map(o=> typeof o==='string'
+        ? { name:o, color:'#63e5ff', stock:'' }
+        : { name:(o&&o.name)||'', color:(o&&o.color)||'#63e5ff', stock:(o && typeof o.stock==='number') ? o.stock : '' })
+    }));
     const catOpts = categories.map(c=>`<option value="${esc(c.key)}" ${p.cat===c.key?'selected':''}>${c.emoji} ${esc(c.label)}</option>`).join('') + `<option value="__new">＋ Новая категория…</option>`;
     const badgeOpts = ['','Хит','Новинка','Скидка','Топ'].map(b=>`<option value="${b}" ${p.badge===b?'selected':''}>${b||'Без бейджа'}</option>`).join('');
     return `<div class="admin-form glass">
@@ -2212,6 +2318,10 @@ function adminProductsHTML(){
       </div>
       <div class="chk-field"><div class="chk-label">Популярное на главной</div>
         <div class="toggle-chip ${p.popular?'on':''}" id="pf_popular" style="display:inline-block;">${p.popular?'🔥 В популярном':'🔥 Не в популярном'}</div>
+      </div>
+      <div class="chk-field"><div class="chk-label">Варианты товара (вкусы, цвета, крепость…)</div>
+        <div id="pf_groups">${editGroupsHTML()}</div>
+        <div class="mini-btn" id="pf_addgroup" style="display:inline-flex;">＋ Добавить группу вариантов</div>
       </div>
       <div class="form-actions">
         <div class="cancel-btn" id="pf_cancel">Отмена</div>
@@ -2255,9 +2365,19 @@ function wireAdminProducts(){
       categories.push({key:cat, label:newName, emoji:'🏷'});
       logAction('Добавлена категория: '+newName);
     }
-    if(p){ Object.assign(p, {title,price,cat,img,desc,hidden,popular,badge:badge||undefined}); logAction('Изменён товар: '+title); }
+    const cleanGroups = editGroups
+      .filter(g=>g.label.trim().length && g.options.some(o=>o.name.trim().length))
+      .map(g=>({ label:g.label.trim(), type: g.type==='chip' ? 'chip' : 'swatch',
+        options: g.options.filter(o=>o.name.trim().length).map(o=>{
+          const opt = { name:o.name.trim() };
+          if(g.type!=='chip') opt.color = o.color || '#63e5ff';
+          const stv = parseInt(o.stock, 10);
+          if(o.stock!=='' && o.stock!==null && o.stock!==undefined && !isNaN(stv)) opt.stock = Math.max(0, stv);
+          return opt;
+        }) }));
+    if(p){ Object.assign(p, {title,price,cat,img,desc,hidden,popular,groups:cleanGroups,badge:badge||undefined}); logAction('Изменён товар: '+title); }
     else {
-      products.push({ id:Date.now(), cat, title, desc, price, img, ph:'ph'+(1+(products.length%7)), groups:[], hidden, popular, badge:badge||undefined });
+      products.push({ id:Date.now(), cat, title, desc, price, img, ph:'ph'+(1+(products.length%7)), groups:cleanGroups, hidden, popular, badge:badge||undefined });
       logAction('Добавлен товар: '+title);
     }
     editProductId = null;
@@ -2276,6 +2396,32 @@ function wireAdminProducts(){
   });
   const catSel = body.querySelector('#pf_cat'), catNew = body.querySelector('#pf_cat_new');
   if(catSel) catSel.addEventListener('change', ()=>{ if(catNew) catNew.style.display = catSel.value==='__new' ? 'block' : 'none'; });
+  /* редактор групп вариантов */
+  const gwrap = body.querySelector('#pf_groups');
+  if(gwrap){
+    const rewire = ()=>{
+      gwrap.innerHTML = editGroupsHTML();
+      gwrap.querySelectorAll('.vg-label').forEach(i=>i.addEventListener('input', ()=>{ editGroups[+i.dataset.g].label = i.value; }));
+      gwrap.querySelectorAll('.vg-type').forEach(s=>s.addEventListener('change', ()=>{ editGroups[+s.dataset.g].type = s.value; rewire(); }));
+      gwrap.querySelectorAll('.vg-color').forEach(i=>i.addEventListener('input', ()=>{ editGroups[+i.dataset.g].options[+i.dataset.o].color = i.value; }));
+      gwrap.querySelectorAll('.vg-name').forEach(i=>i.addEventListener('input', ()=>{ editGroups[+i.dataset.g].options[+i.dataset.o].name = i.value; }));
+      gwrap.querySelectorAll('.vg-stock').forEach(i=>i.addEventListener('input', ()=>{
+        const v = i.value.trim();
+        editGroups[+i.dataset.g].options[+i.dataset.o].stock = v==='' ? '' : Math.max(0, parseInt(v,10)||0);
+      }));
+      gwrap.querySelectorAll('[data-gdel]').forEach(b=>b.addEventListener('click', ()=>{ editGroups.splice(+b.dataset.gdel,1); rewire(); }));
+      gwrap.querySelectorAll('[data-odel]').forEach(b=>b.addEventListener('click', ()=>{
+        const parts = b.dataset.odel.split(':');
+        editGroups[+parts[0]].options.splice(+parts[1],1); rewire();
+      }));
+      gwrap.querySelectorAll('[data-oadd]').forEach(b=>b.addEventListener('click', ()=>{
+        editGroups[+b.dataset.oadd].options.push({ name:'', color:'#63e5ff', stock:'' }); rewire();
+      }));
+    };
+    rewire();
+    const ag = body.querySelector('#pf_addgroup');
+    if(ag) ag.addEventListener('click', ()=>{ editGroups.push({ label:'', type:'swatch', options:[{ name:'', color:'#63e5ff', stock:'' }] }); rewire(); });
+  }
   body.querySelectorAll('[data-edit]').forEach(b=>b.addEventListener('click', ()=>{ editProductId = b.dataset.edit; renderAdmin(); }));
   body.querySelectorAll('[data-del]').forEach(b=>b.addEventListener('click', ()=>{
     const id = b.dataset.del;
@@ -2456,7 +2602,7 @@ function adminDBHTML(){
     </div>
     <p class="note"><b>Как подключить базу:</b><br>
     1. Зарегистрируйся на jsonbin.io<br>
-    2. Create Bin — создай контейнер, например с содержимым <code>{}</code><br>
+    2. Create Bin — в поле JSON вставь: <code>{"settings":{},"categories":[],"products":[],"banners":[],"districts":[],"orders":[],"logs":[],"referrals":[]}</code><br>
     3. Скопируй Bin ID и X-Master-Key (раздел API Keys)<br>
     4. Впиши их в начало файла index.html (блок CONFIG) — или сюда<br><br>
     Пока база не настроена, заказы хранятся локально на устройстве.</p>`;
@@ -2577,13 +2723,15 @@ updateCartUI();
 updateProfile();
 updatePointsUI();
 invitedByCode();
-updateNavThumb();
+updateNavThumb(true);
+requestAnimationFrame(()=>{ updateNavThumb(true); setSegment(currentCat, false); });
+if(document.fonts && document.fonts.ready){ document.fonts.ready.then(()=>{ updateNavThumb(true); setSegment(currentCat, false); }); }
 window.addEventListener('resize', ()=>{ setSegment(currentCat, false); updateNavThumb(); });
 updateBackBtn();
 /* подтянуть данные из JSONBin, если настроен */
 if(DB.ready){
-  DB.read().then(doc=>{ if(doc && typeof doc==='object' && !Array.isArray(doc)) applyCloudDoc(doc, false); }).catch(()=>{});
+  DB.read().then(doc=>{ if(doc && typeof doc==='object' && !Array.isArray(doc)) applyCloudDoc(doc, false); processRefPending(); }).catch(()=>{});
 }
 </script>
-</body>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a3a9c62f3e669847',t:'MTc4OTMzMDAwNA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
