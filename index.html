@@ -174,7 +174,7 @@ textarea.chk-input{resize:none;min-height:74px;line-height:1.5;}
 .banner-slide.snap{transition:none;}
 
 /* ===== TOPBAR ===== */
-.topbar{display:flex;align-items:center;justify-content:center;padding:calc(16px + var(--st)) 20px 4px;gap:10px;}
+.topbar{display:flex;align-items:center;justify-content:center;padding:calc(23px + var(--st)) 20px 6px;gap:10px;}
 .top-logo{display:flex;align-items:center;}
 .top-logo b{font-family:var(--font-head);font-weight:600;font-size:15px;letter-spacing:1.5px;padding:9px 12px;margin-left:-12px;cursor:pointer;}
 .top-icons{display:flex;gap:8px;}
@@ -205,11 +205,13 @@ textarea.chk-input{resize:none;min-height:74px;line-height:1.5;}
 /* ===== QUICK CATS (вау-плитки) ===== */
 .quick-cats{display:flex;flex-direction:column;gap:12px;padding:22px 20px 4px;}
 .qrow{display:flex;gap:12px;}
-.qrow .qcat.a{flex:1.7;}
-.qrow .qcat.b{flex:1;}
-.qrow.flip .qcat.a{flex:1;}
-.qrow.flip .qcat.b{flex:1.7;}
+.qrow .qcat{min-width:0;}
+.qrow .qcat.a{flex:1.7 1 0;}
+.qrow .qcat.b{flex:1 1 0;}
+.qrow.flip .qcat.a{flex:1 1 0;}
+.qrow.flip .qcat.b{flex:1.7 1 0;}
 .qcat{position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;min-height:112px;border-radius:28px;cursor:pointer;transition:transform .18s var(--smooth);}
+.qcat span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%;padding:0 8px;}
 .qcat:active{transform:scale(.955);}
 .qcat::before{content:"";position:absolute;top:-45%;right:-25%;width:85%;height:130%;background:radial-gradient(circle at center, var(--qc), transparent 68%);opacity:.3;filter:blur(24px);pointer-events:none;}
 .qcat::after{content:"";position:absolute;top:-20%;bottom:-20%;left:-80%;width:45%;background:linear-gradient(100deg, transparent, rgba(255,255,255,.14), transparent);transform:skewX(-20deg);animation:qshine 5.2s var(--smooth) infinite;pointer-events:none;}
@@ -259,8 +261,7 @@ textarea.chk-input{resize:none;min-height:74px;line-height:1.5;}
 }
 .pcard-glow{position:absolute;left:18%;right:18%;top:-20px;height:40px;background:var(--grad);filter:blur(20px);opacity:.5;border-radius:50%;z-index:-1;pointer-events:none;}
 .pcard-top-row{display:flex;align-items:center;gap:6px;margin-bottom:1px;}
-.pcard-cat{font-size:8.5px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);}
-.pcard-dot{width:8px;height:8px;border-radius:50%;}
+.pcard-cat{display:inline-block;font-size:8.5px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;padding:3px 8px;border-radius:8px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:1.2;}
 .pcard-title{font-size:11.5px;font-weight:600;line-height:1.25;color:#fff;margin-bottom:2px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
 .pcard-bottom{display:flex;align-items:center;justify-content:space-between;gap:8px;}
 .pcard-price{font-family:var(--font-num);font-weight:700;font-size:12.5px;color:#fff;}
@@ -269,12 +270,6 @@ textarea.chk-input{resize:none;min-height:74px;line-height:1.5;}
 .pcard-add svg{width:12px;height:12px;stroke:#08080b;stroke-width:2.8;}
 .pcard-count{position:absolute;top:-6px;right:-6px;min-width:17px;height:17px;padding:0 4px;border-radius:99px;background:var(--pink);color:#fff;font-size:9.5px;font-weight:800;display:flex;align-items:center;justify-content:center;line-height:1;}
 
-.pcard-badge{position:absolute;top:10px;left:10px;z-index:2;font-size:8px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;padding:5px 10px;border-radius:99px;color:#fff;backdrop-filter:blur(8px);box-shadow:0 4px 12px rgba(0,0,0,.25);}
-.pcard-badge.b-hit{background:linear-gradient(135deg,#ff5b9a,#ff8fb8);}
-.pcard-badge.b-new{background:linear-gradient(135deg,#63e5ff,#8feeff);color:#08080b;}
-.pcard-badge.b-sale{background:linear-gradient(135deg,#ffcf7d,#ffe3ae);color:#08080b;}
-.pcard-badge.b-top{background:linear-gradient(135deg,#a476ff,#c3a6ff);}
-.pcard-badge.b-def{background:var(--grad);color:#08080b;}
 
 .ph1{background:linear-gradient(135deg,#123044,#0a1720);}
 .ph2{background:linear-gradient(135deg,#241033,#150a1f);}
@@ -327,6 +322,9 @@ textarea.chk-input{resize:none;min-height:74px;line-height:1.5;}
 .stat-box{border-radius:20px;padding:15px 10px;text-align:center;}
 .stat-box b{font-family:var(--font-num);font-size:17px;display:block;margin-bottom:2px;}
 .stat-box span{font-size:9.5px;color:var(--muted);}
+.stat-box.tap{cursor:pointer;border:1px solid var(--glass-brd);}
+.stat-box.tap:active{transform:scale(.95);}
+.stat-box.tap span{color:var(--text);opacity:.75;font-weight:700;letter-spacing:.2px;}
 
 .menu-list{padding:20px 20px 0;}
 .menu-item{display:flex;align-items:center;gap:12px;padding:14px;border-radius:18px;margin-bottom:8px;}
@@ -379,12 +377,16 @@ textarea.chk-input{resize:none;min-height:74px;line-height:1.5;}
 .acc-preview{height:46px;border-radius:14px;margin:8px 0 4px;background:var(--grad);}
 .search-row .search-box{flex:1;margin-top:0;}
 .filter-toggle{position:relative;width:46px;border-radius:15px;display:flex;align-items:center;justify-content:center;color:var(--muted);cursor:pointer;flex:none;}
+.price-f{display:flex;align-items:center;gap:5px;flex:none;flex-basis:100%;padding:7px 10px;border-radius:13px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);}
+.price-f span{font-size:11px;color:var(--muted);font-weight:700;}
+.price-f i{font-style:normal;color:var(--muted2);font-size:10px;}
+.price-f input{width:54px;background:none;border:none;outline:none;color:var(--text);font-family:var(--font-num);font-size:12px;font-weight:600;-moz-appearance:textfield;appearance:textfield;}
+.price-f input::-webkit-outer-spin-button,.price-f input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
+.price-f input::placeholder{color:var(--muted2);font-weight:500;}
 .filter-toggle svg{width:17px;height:17px;stroke:currentColor;}
 .filter-toggle.on{color:var(--cyan);}
-.fbadge{position:absolute;top:-5px;right:-5px;min-width:16px;height:16px;border-radius:99px;background:var(--grad);color:#08080b;font-size:9.5px;font-weight:800;display:none;align-items:center;justify-content:center;padding:0 4px;line-height:1;}
-.fbadge.show{display:flex;}
-.filter-row.shop-filters{display:flex;max-height:0;opacity:0;overflow:hidden;margin-top:0;padding:0 20px;transition:max-height .45s var(--nav-ease), opacity .32s var(--smooth), margin-top .45s var(--nav-ease);}
-.filter-row.shop-filters.open{max-height:70px;opacity:1;margin-top:10px;}
+.filter-row.shop-filters{display:flex;flex-wrap:wrap;max-height:0;opacity:0;overflow:hidden;margin-top:0;padding:0 20px;transition:max-height .45s var(--nav-ease), opacity .32s var(--smooth), margin-top .45s var(--nav-ease);}
+.filter-row.shop-filters.open{max-height:160px;opacity:1;margin-top:10px;}
 .rev-chart{position:relative;}
 .rev-chart svg{width:100%;height:120px;display:block;}
 .rev-labs{position:relative;height:16px;margin-top:2px;}
@@ -444,8 +446,6 @@ textarea.chk-input{resize:none;min-height:74px;line-height:1.5;}
 .nav-stage{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;height:112px;z-index:90;pointer-events:none;}
 .navbar{position:absolute;bottom:calc(20px + var(--sb));left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:4px;padding:7px;border-radius:99px;pointer-events:all;width:max-content;max-width:calc(100% - 24px);}
 .nav-thumb{position:absolute;top:7px;bottom:7px;left:7px;width:49px;border-radius:99px;z-index:0;background:linear-gradient(135deg, color-mix(in srgb, var(--cyan) 22%, transparent), color-mix(in srgb, var(--cyan) 6%, transparent));transition:left .55s var(--nav-ease), width .55s var(--nav-ease), background .4s linear;}
-.nav-thumb.tint-pink{background:linear-gradient(135deg, rgba(255,91,154,.22), rgba(255,91,154,.06));}
-.nav-thumb.tint-violet{background:linear-gradient(135deg, rgba(164,118,255,.22), rgba(164,118,255,.06));}
 .nav-btn{position:relative;z-index:1;flex:0 0 auto;display:flex;align-items:center;justify-content:center;height:45px;padding:0 15px;border-radius:99px;color:var(--muted);background:none;border:none;outline:none;font-family:var(--font-body);touch-action:manipulation;cursor:pointer;transition:color .5s var(--smooth), transform .12s var(--smooth);}
 .nav-btn:active{transform:scale(.9);}
 .nav-btn svg{width:19px;height:19px;stroke:currentColor;fill:none;flex-shrink:0;display:block;}
@@ -453,14 +453,12 @@ textarea.chk-input{resize:none;min-height:74px;line-height:1.5;}
 .nav-btn .label{max-width:0;min-width:0;width:0;overflow:hidden;opacity:0;white-space:nowrap;font-size:10px;font-weight:700;line-height:1;transition:max-width .55s var(--nav-ease), opacity .35s var(--smooth) .1s, margin .55s var(--nav-ease);}
 .nav-btn.active{color:var(--text);}
 .nav-btn.active .label{max-width:82px;width:auto;opacity:1;margin-left:6px;}
-.nav-btn.tint-cyan.active{color:var(--cyan);}
-.nav-btn.tint-pink.active{color:var(--pink);}
-.nav-btn.tint-violet.active{color:var(--violet);}
+.nav-btn.active{color:var(--cyan);}
 .nav-badge{position:absolute;top:-5px;right:-3px;min-width:18px;height:18px;padding:0 5px;border-radius:99px;background:var(--pink);color:#fff;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;line-height:1;}
 .nav-avatar{width:19px;height:19px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:9.5px;font-weight:800;color:#08080b;flex-shrink:0;overflow:hidden;font-family:var(--font-head);}
 .nav-avatar img{width:19px;height:19px;border-radius:50%;object-fit:cover;display:block;}
 
-.toast-wrap{position:fixed;top:calc(14px + var(--st));left:50%;transform:translateX(-50%);width:calc(100% - 40px);max-width:440px;z-index:200;display:flex;flex-direction:column;gap:8px;pointer-events:none;}
+.toast-wrap{position:fixed;top:calc(62px + var(--st));left:50%;transform:translateX(-50%);width:calc(100% - 40px);max-width:440px;z-index:200;display:flex;flex-direction:column;gap:8px;pointer-events:none;}
 .toast{border-radius:16px;padding:12px 14px;display:flex;align-items:center;gap:10px;opacity:0;transform:translateY(-14px);transition:all .45s var(--smooth);}
 .toast.show{opacity:1;transform:translateY(0);}
 .toast .ic{width:26px;height:26px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:13px;background:rgba(255,255,255,.08);}
@@ -480,7 +478,12 @@ textarea.chk-input{resize:none;min-height:74px;line-height:1.5;}
 .sheet-price-row{margin-bottom:16px;}
 .sheet-price{font-family:var(--font-num);font-size:22px;font-weight:700;}
 
-.variant-block{margin-bottom:16px;}
+.variant-block{margin-bottom:12px;border-radius:20px;padding:14px;background:linear-gradient(155deg,var(--glass-l),var(--glass-d));border:1px solid var(--glass-brd);}
+.variant-block .variant-label{margin-bottom:10px;}
+.sheet-block{border-radius:20px;padding:14px;margin-bottom:12px;}
+#sheetReviews{border-radius:20px;padding:14px;background:linear-gradient(155deg,var(--glass-l),var(--glass-d));border:1px solid var(--glass-brd);margin-bottom:12px;}
+#sheetReviews:empty{display:none;}
+#sheetReviews .rev-label{margin-top:2px;}
 .variant-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:9px;font-weight:600;}
 .variant-row{display:flex;gap:8px;flex-wrap:wrap;}
 .flavor-chip{display:flex;align-items:center;gap:7px;padding:8px 13px 8px 8px;border-radius:14px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);font-size:12px;font-weight:600;color:var(--muted);transition:background .3s var(--smooth), border-color .3s var(--smooth), color .3s var(--smooth);}
@@ -503,7 +506,6 @@ textarea.chk-input{resize:none;min-height:74px;line-height:1.5;}
 .qty-inp::-webkit-outer-spin-button,.qty-inp::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
 .flavor-chip.soldout,.strength-chip.soldout{opacity:.35;pointer-events:none;}
 .stk-out{font-size:10px;color:var(--pink);font-weight:700;margin-left:3px;}
-.stk-low{font-size:10px;color:var(--muted);font-weight:700;margin-left:3px;}
 
 .sheet-bottom-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:6px;}
 .sheet-buy{flex:1;background:var(--grad);color:#08080b;font-weight:700;font-size:13.5px;padding:14px 18px;border-radius:16px;display:flex;align-items:center;justify-content:center;gap:8px;}
@@ -590,14 +592,20 @@ textarea.chk-input{resize:none;min-height:74px;line-height:1.5;}
         </div>
         <div class="filter-toggle glass" id="filterToggle" title="Фильтры">
           <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M7 12h10M10 18h4"/></svg>
-          <span class="fbadge" id="fBadge">1</span>
         </div>
       </div>
       <div class="filter-row shop-filters" id="shopFilters">
         <div class="fchip active" data-sf="stock">✅ В наличии</div>
+        <div class="fchip" data-sf="rate">★ 4 и выше</div>
         <div class="fchip" data-sf="pop">🔥 Популярное</div>
         <div class="fchip" data-sf="cheap">↓ Дешевле</div>
         <div class="fchip" data-sf="exp">↑ Дороже</div>
+        <div class="price-f">
+          <span>₽</span>
+          <input type="number" id="pfMin" inputmode="numeric" placeholder="от">
+          <i>—</i>
+          <input type="number" id="pfMax" inputmode="numeric" placeholder="до">
+        </div>
       </div>
 
       <div class="segment-outer">
@@ -636,7 +644,7 @@ textarea.chk-input{resize:none;min-height:74px;line-height:1.5;}
       </div>
 
       <div class="stats-grid">
-        <div class="stat-box glass"><b id="statOrders">0</b><span>заказов</span></div>
+        <div class="stat-box glass tap" id="statOrdersBox" title="Мои заказы"><b id="statOrders">0</b><span>Мои заказы <svg class="chev" viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" style="width:10px;height:10px;stroke:var(--muted2);vertical-align:-1px;"><path d="M9 6l6 6-6 6"/></svg></span></div>
         <div class="stat-box glass"><b id="statItems">0</b><span>в корзине</span></div>
       </div>
 
@@ -688,6 +696,16 @@ textarea.chk-input{resize:none;min-height:74px;line-height:1.5;}
       </div>
     </section>
 
+    <!-- ============ MY ORDERS ============ -->
+    <section class="screen" id="screen-myorders">
+      <div class="topbar">
+        <div class="gbtn glass" id="myOrdersBack"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg></div>
+        <b style="font-family:var(--font-head);font-weight:600;font-size:15px;">Мои заказы</b>
+        <div style="width:38px;"></div>
+      </div>
+      <div class="section" style="padding-top:12px;" id="myOrdersList"></div>
+    </section>
+
   </div>
 </div>
 
@@ -695,20 +713,20 @@ textarea.chk-input{resize:none;min-height:74px;line-height:1.5;}
 <div class="nav-stage">
   <div class="navbar glass" id="navbar">
     <div class="nav-thumb" id="navThumb"></div>
-    <button class="nav-btn tint-cyan active" data-screen="home">
+    <button class="nav-btn active" data-screen="home">
       <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5 12 3l9 6.5V21a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/></svg>
       <span class="label">Главная</span>
     </button>
-    <button class="nav-btn tint-cyan" data-screen="catalog">
+    <button class="nav-btn" data-screen="catalog">
       <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
       <span class="label">Каталог</span>
     </button>
-    <button class="nav-btn tint-pink" data-screen="cart">
+    <button class="nav-btn" data-screen="cart">
       <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M2.5 3h2l2.5 12.5h11L20.5 7H6"/></svg>
       <span class="label">Корзина</span>
       <div class="nav-badge" id="navCartCount" style="display:none;">0</div>
     </button>
-    <button class="nav-btn tint-violet" data-screen="profile">
+    <button class="nav-btn" data-screen="profile">
       <div class="nav-avatar" id="navAvatar">?</div>
       <span class="label">Профиль</span>
     </button>
@@ -722,12 +740,14 @@ textarea.chk-input{resize:none;min-height:74px;line-height:1.5;}
   <div class="sheet-media" id="sheetMedia">
     <div class="sheet-close" id="sheetCloseBtn"><svg viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></div>
   </div>
-  <div id="sheetBadge" class="pcard-badge" style="position:static;display:none;margin-bottom:10px;"></div>
   <h3 id="sheetTitle"></h3>
-  <p class="desc" id="sheetDesc"></p>
+  <div class="sheet-block glass" id="sheetDescBlock">
+    <div class="variant-label">Описание</div>
+    <p class="desc" id="sheetDesc" style="margin:0;"></p>
+  </div>
+  <div id="sheetVariants"></div>
   <div class="sheet-price-row"><div class="sheet-price" id="sheetPrice"></div></div>
   <div id="sheetReviews"></div>
-  <div id="sheetVariants"></div>
   <div class="sheet-bottom-row" id="sheetBottomRow">
     <div class="qty-mini" id="singleQtyBlock">
       <button id="sheetQtyMinus"><svg viewBox="0 0 24 24"><path d="M5 12h14"/></svg></button>
@@ -1321,41 +1341,37 @@ function toast(msg, emoji='✓'){
   setTimeout(()=>{ el.classList.remove('show'); setTimeout(()=>el.remove(),400); }, 2200);
 }
 function labelFor(cat){ const c = categories.find(x=>x.key===cat); return c ? c.label : cat; }
+function hexLum(hex){
+  const m = String(hex||'').replace('#','');
+  const v = m.length === 3 ? m.split('').map(x=>x+x).join('') : m;
+  const r = parseInt(v.slice(0,2),16)||0, g = parseInt(v.slice(2,4),16)||0, b = parseInt(v.slice(4,6),16)||0;
+  return .2126*r + .7152*g + .0722*b;
+}
+function contrastText(hex){ return hexLum(hex) > 150 ? '#08080b' : '#ffffff'; }
 function fmt(n){ return n.toLocaleString('ru-RU') + ' ₽'; }
 function cartQtyForProduct(id){ let s=0; Object.values(state.cart).forEach(i=>{ if(i.id===id) s+=i.qty; }); return s; }
 
 /* ===================== PRODUCT CARD ===================== */
-function badgeClass(b){
-  const v = String(b||'').toLowerCase();
-  if(v==='хит') return 'b-hit';
-  if(v==='новинка') return 'b-new';
-  if(v==='скидка') return 'b-sale';
-  if(v==='топ') return 'b-top';
-  return 'b-def';
-}
 function productCard(p, delay){
-  const totalQty = cartQtyForProduct(p.id);
-  const accent = (p.groups && p.groups[0] && p.groups[0].type==='swatch') ? p.groups[0].options[0].color : null;
+  const ccat = categories.find(x=>x.key===p.cat);
+  const ccol = (ccat && ccat.color) ? ccat.color : '#2a2a33';
   const card = document.createElement('div');
   card.className = 'pcard ' + p.ph;
   card.dataset.pid = p.id;
   card.style.animationDelay = delay + 's';
   card.innerHTML = `
     <img class="pcard-photo" src="${p.img}" alt="" loading="lazy" decoding="async" onerror="this.style.display='none'">
-    ${p.badge ? `<span class="pcard-badge ${badgeClass(p.badge)}">${esc(p.badge)}</span>` : ''}
     <div class="pcard-scrim"></div>
     <div class="pcard-panel">
       <div class="pcard-glow"></div>
       <div class="pcard-top-row">
-        <span class="pcard-cat">${labelFor(p.cat)}</span>
-        ${accent ? `<span class="pcard-dot" style="background:${accent}"></span>` : ''}
+        <span class="pcard-cat" style="background:${ccol};color:${contrastText(ccol)};">${labelFor(p.cat)}</span>
       </div>
       <h4 class="pcard-title">${p.title}</h4>
       ${(() => { const r = ratingOf(p); return r.n ? `<div class="pcard-rate"><span class="rev-stars">${starsHTML(r.avg)}</span><i>${r.avg.toFixed(1)}</i><em>· ${r.n}</em></div>` : ''; })()}
       <div class="pcard-bottom">
         <span class="pcard-price">${fmt(p.price)}</span>
         <div class="pcard-add-wrap">
-          ${totalQty>0 ? `<span class="pcard-count">${totalQty}</span>` : ''}
           <div class="pcard-add"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></div>
         </div>
       </div>
@@ -1367,7 +1383,7 @@ function productCard(p, delay){
 }
 
 let currentCat='all', searchVal='';
-let shopSort = 'def', shopStockOnly = true;
+let shopSort = 'def', shopStockOnly = true, shopPriceMin = null, shopPriceMax = null, shopMinRating = false;
 function productInStock(p){
   if(!(p.groups||[]).length) return true;
   return p.groups.some(g=>(g.options||[]).some(o=> typeof o.stock!=='number' || o.stock>0));
@@ -1377,7 +1393,7 @@ function forceGridRerender(){ _gridSig=''; renderCatalogGrid(currentCat, searchV
 function renderCatalogGrid(cat, search){
   const grid = document.getElementById('catalogGrid');
   /* пропускаем повторный рендер, если ничего не изменилось — главный источник лагов */
-  const sig = [cat, search, shopStockOnly?1:0, shopSort, products.map(p=>p.id+'.'+p.price+'.'+(p.hidden?1:0)+'.'+(p.popular?1:0)).join(',')].join('|');
+  const sig = [cat, search, shopStockOnly?1:0, shopSort, shopPriceMin, shopPriceMax, shopMinRating?1:0, products.map(p=>p.id+'.'+p.price+'.'+(p.hidden?1:0)+'.'+(p.popular?1:0)).join(','), categories.map(x=>x.key+'.'+x.label+'.'+(x.color||'')).join('~')].join('|');
   if(sig === _gridSig && grid.children.length) return;
   _gridSig = sig;
   let list = products.filter(p=>!p.hidden);
@@ -1390,6 +1406,9 @@ function renderCatalogGrid(cat, search){
     });
   }
   if(shopStockOnly) list = list.filter(productInStock);
+  if(shopPriceMin != null) list = list.filter(p=>p.price >= shopPriceMin);
+  if(shopPriceMax != null) list = list.filter(p=>p.price <= shopPriceMax);
+  if(shopMinRating) list = list.filter(p=>{ const r = ratingOf(p); return r.n && r.avg >= 4; });
   if(shopSort==='cheap') list = list.slice().sort((a,b)=>a.price-b.price);
   else if(shopSort==='exp') list = list.slice().sort((a,b)=>b.price-a.price);
   else if(shopSort==='pop') list = list.slice().sort((a,b)=>((b.popular?1:0)-(a.popular?1:0)) || ((b.id||0)-(a.id||0)));
@@ -1475,24 +1494,11 @@ function cartTotals(){
   Object.values(state.cart).forEach(i=>{ subtotal += i.price*i.qty; count += i.qty; });
   return {subtotal, count};
 }
-function updateCardBadges(){
-  document.querySelectorAll('.pcard').forEach(card=>{
-    const id = card.dataset.pid;
-    if(!id) return;
-    const q = cartQtyForProduct(id);
-    let b = card.querySelector('.pcard-count');
-    if(q>0){
-      if(!b){ b = document.createElement('span'); b.className = 'pcard-count'; const w = card.querySelector('.pcard-add-wrap'); if(w) w.appendChild(b); }
-      b.textContent = q;
-    } else if(b) b.remove();
-  });
-}
 function updateCartUI(){
   const {count} = cartTotals();
   const badge = document.getElementById('navCartCount');
   if(count>0){ badge.style.display='flex'; badge.textContent=count; } else badge.style.display='none';
   document.getElementById('statItems').textContent = count;
-  updateCardBadges();
   saveCart();
 }
 
@@ -1830,14 +1836,17 @@ document.getElementById('closeSuccess').addEventListener('click', popLayerUI);
 
 function applyPointAdjustments(){
   const u = getTgUser();
-  const myName = u && u.username ? String(u.username).toLowerCase().replace(/^@/,'') : '';
-  if(!myName) return;
+  if(!u) return;
+  const myName = u.username ? String(u.username).toLowerCase().replace(/^@/,'') : '';
+  const myId = String(u.id);
   const done = LS.get('cl_adj_done', []);
   let earned = 0;
   pointAdjustments.forEach(a=>{
-    if(a && a.username && a.id && !done.includes(a.id) && String(a.username).toLowerCase().replace(/^@/,'') === myName){
-      earned += (+a.amount||0); done.push(a.id);
-    }
+    if(!a || !a.id || done.includes(a.id)) return;
+    let hit = false;
+    if(a.tgId){ hit = String(a.tgId) === myId; }
+    else if(a.username){ hit = !!myName && String(a.username).toLowerCase().replace(/^@/,'') === myName; }
+    if(hit){ earned += (+a.amount||0); done.push(a.id); }
   });
   if(earned){
     LS.set('cl_adj_done', done);
@@ -1966,7 +1975,33 @@ function processRefPending(){
 }
 function botUsername(){ return String(settings.botUsername || CONFIG.BOT_USERNAME || '').trim().replace(/^@/,''); }
 function openReferral(){ haptic('light'); goto('referral'); renderReferral(); pushLayer('referral', ()=>goto('profile')); }
+function openMyOrders(){
+  haptic('light');
+  renderMyOrders();
+  goto('myorders');
+  pushLayer('myorders', ()=>goto('profile'));
+}
+function renderMyOrders(){
+  const wrap = document.getElementById('myOrdersList');
+  if(!wrap) return;
+  const mine = myOrders();
+  if(!mine.length){ wrap.innerHTML = emptyHTML('🧾','Заказов пока нет','Оформи первый заказ — он появится здесь'); return; }
+  wrap.innerHTML = mine.map(o=>{
+    const items = (o.items||[]).map(i=>`${i.qty}× ${esc(i.title)}${i.variant?(' · '+esc(i.variant)):''}`).join('<br>');
+    return `<div class="order-card glass">
+      <div class="order-head"><b>${esc(o.id)}</b><div style="display:flex;align-items:center;gap:8px;"><span class="order-date">${new Date(o.createdAt).toLocaleString('ru-RU')}</span>${statusChip(o.status)}</div></div>
+      <div class="order-info">
+        ${o.method==='pickup' ? '🏃 Самовывоз' : '🛵 Доставка: ' + (esc(o.address)||'—') + (o.district ? ' · ' + esc(o.district) : '')}<br>
+        💳 ${esc(o.payment||'—')}${o.transferFee ? ' · комиссия ' + fmt(o.transferFee) : ''}
+      </div>
+      <div class="order-items">${items || '—'}</div>
+      <div class="order-total"><span>Итого</span><b>${fmt(o.total||0)}</b></div>
+    </div>`;
+  }).join('');
+}
 document.getElementById('openRefBtn').addEventListener('click', openReferral);
+document.getElementById('statOrdersBox').addEventListener('click', openMyOrders);
+document.getElementById('myOrdersBack').addEventListener('click', popLayerUI);
 document.getElementById('copyRefBtn').addEventListener('click', ()=>{
   haptic('light');
   const code = myRefCode();
@@ -2011,7 +2046,7 @@ function renderSheetReviews(p){
   const {avg, n} = ratingOf(p);
   const mine = productReviews(p).some(r=>r.by===myReviewKey());
   const bought = purchasedProduct(p);
-  let html = '';
+  let html = `<div class="variant-label">Отзывы</div>`;
   if(n) html += `<div class="rev-summary">${starsHTML(avg)}<b>${avg.toFixed(1)}</b><span class="rev-count">${n} отзыв${(n%10===1&&n%100!==11)?'':((n%10>=2&&n%10<=4&&(n%100<10||n%100>=20))?'а':'ов')}</span></div>`;
   else html += '<div class="rev-summary"><span class="rev-count">Отзывов пока нет</span></div>';
   const list = productReviews(p).slice(-4).reverse();
@@ -2130,10 +2165,8 @@ function openSheet(p){
   media.innerHTML = `<img src="${p.img}" alt="" decoding="async" onerror="this.style.display='none'"><div class="sheet-close" id="sheetCloseBtn2"><svg viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></div>`;
   media.className = 'sheet-media ' + p.ph;
   document.getElementById('sheetTitle').textContent = p.title;
-  const sb = document.getElementById('sheetBadge');
-  if(p.badge){ sb.style.display='inline-block'; sb.textContent = p.badge; sb.className = 'pcard-badge ' + badgeClass(p.badge); }
-  else sb.style.display='none';
   document.getElementById('sheetDesc').textContent = p.desc;
+  document.getElementById('sheetDescBlock').style.display = p.desc ? '' : 'none';
 
   document.getElementById('singleQtyBlock').style.display = (p.groups||[]).length === 0 ? 'flex' : 'none';
   document.getElementById('sheetQtyInp').value = sheetQty;
@@ -2172,8 +2205,9 @@ function renderVariantGroups(){
       const sold = st !== null && st <= 0;
       const el = document.createElement('button');
       el.className = (isSwatch ? 'flavor-chip' : 'strength-chip') + (isOn ? ' active' : '') + (sold ? ' soldout' : '');
-      el.innerHTML = (isSwatch ? `<span class="dot" style="background:${opt.color}"></span>${opt.name}` : `${opt}`)
-        + (sold ? '<span class="stk-out">нет</span>' : (st !== null && st <= 5 ? `<span class="stk-low">${st}</span>` : ''))
+      const optName = typeof opt === 'string' ? opt : ((opt && opt.name) || '');
+      el.innerHTML = (isSwatch ? `<span class="dot" style="background:${(opt && opt.color) || '#63e5ff'}"></span>${esc(optName)}` : `${esc(optName)}`)
+        + (sold ? '<span class="stk-out">нет</span>' : '')
         + ` <svg class="check" viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" style="width:13px;height:13px;display:${isOn?'inline':'none'};stroke:var(--cyan);vertical-align:middle;"><path d="M20 6 9 17l-5-5"/></svg>`;
       if(!sold) el.addEventListener('click', ()=>{
         haptic('light');
@@ -2341,7 +2375,7 @@ function updateNavThumb(noAnim){
   const thumb = document.getElementById('navThumb');
   const act = document.querySelector('.nav-btn.active');
   if(!thumb || !act) return;
-  thumb.className = 'nav-thumb' + (act.classList.contains('tint-pink') ? ' tint-pink' : act.classList.contains('tint-violet') ? ' tint-violet' : '');
+  thumb.className = 'nav-thumb';
   const btns = [...document.querySelectorAll('.navbar .nav-btn')];
   let left = NAV_GEO.barPad;
   for(const b of btns){ if(b === act) break; left += NAV_GEO.padX + NAV_GEO.icon + NAV_GEO.gap; }
@@ -2366,9 +2400,8 @@ catSearchInput.addEventListener('input', (e)=>{
   _searchTimer = setTimeout(()=> renderCatalogGrid(currentCat, searchVal), 250);
 });
 function updateFilterBadge(){
-  const k = (shopStockOnly?1:0) + (shopSort!=='def'?1:0);
-  const b = document.getElementById('fBadge'), t = document.getElementById('filterToggle');
-  if(b){ b.textContent = k; b.classList.toggle('show', k>0); }
+  const k = (shopStockOnly?1:0) + (shopSort!=='def'?1:0) + (shopPriceMin!=null?1:0) + (shopPriceMax!=null?1:0) + (shopMinRating?1:0);
+  const t = document.getElementById('filterToggle');
   if(t) t.classList.toggle('on', k>0);
 }
 document.getElementById('filterToggle').addEventListener('click', ()=>{
@@ -2380,9 +2413,24 @@ document.querySelectorAll('#shopFilters .fchip').forEach(ch=>{
     haptic('light');
     const k = ch.dataset.sf;
     if(k==='stock'){ shopStockOnly = !shopStockOnly; ch.classList.toggle('active', shopStockOnly); }
-    else { shopSort = k; document.querySelectorAll('#shopFilters .fchip:not([data-sf="stock"])').forEach(x=>x.classList.toggle('active', x===ch)); }
+    else if(k==='rate'){ shopMinRating = !shopMinRating; ch.classList.toggle('active', shopMinRating); }
+    else { shopSort = k; document.querySelectorAll('#shopFilters .fchip:not([data-sf="stock"]):not([data-sf="rate"])').forEach(x=>x.classList.toggle('active', x===ch)); }
     updateFilterBadge();
     renderCatalogGrid(currentCat, searchVal);
+  });
+});
+let _priceTimer = null;
+['pfMin','pfMax'].forEach(id=>{
+  document.getElementById(id).addEventListener('input', ()=>{
+    clearTimeout(_priceTimer);
+    _priceTimer = setTimeout(()=>{
+      const mn = parseInt(document.getElementById('pfMin').value, 10);
+      const mx = parseInt(document.getElementById('pfMax').value, 10);
+      shopPriceMin = isNaN(mn) ? null : mn;
+      shopPriceMax = isNaN(mx) ? null : mx;
+      updateFilterBadge();
+      renderCatalogGrid(currentCat, searchVal);
+    }, 400);
   });
 });
 
@@ -2404,6 +2452,16 @@ function showBanner(i){
 function restartBannerAuto(){
   clearInterval(bannerTimer);
   if(bannerScroll.children.length > 1) bannerTimer = setInterval(()=> showBanner((bannerIdx+1) % bannerScroll.children.length), 5000);
+}
+function renderBrandsLine(){
+  const bt = document.getElementById('brandsTrack');
+  if(!bt) return;
+  const raw = String(settings.brandsLine!=null && settings.brandsLine!=='' ? settings.brandsLine : (CONFIG.BRANDS_LINE||''));
+  const brands = raw.split(/[·,]/).map(s=>s.trim()).filter(Boolean);
+  const seq = brands.map(b=>`<span>${esc(b)}</span>`).join('');
+  bt.innerHTML = seq + seq;
+  if(!brands.length) bt.parentElement.style.display = 'none';
+  else bt.parentElement.style.display = '';
 }
 function renderBanners(){
   const shown = banners.filter(b=>b.on!==false);
@@ -2807,13 +2865,11 @@ function adminProductsHTML(){
         : { name:(o&&o.name)||'', color:(o&&o.color)||'#63e5ff', stock:(o && typeof o.stock==='number') ? o.stock : '' })
     }));
     const catOpts = categories.map(c=>`<option value="${esc(c.key)}" ${p.cat===c.key?'selected':''}>${c.emoji} ${esc(c.label)}</option>`).join('') + `<option value="__new">＋ Новая категория…</option>`;
-    const badgeOpts = ['','Хит','Новинка','Скидка','Топ'].map(b=>`<option value="${b}" ${p.badge===b?'selected':''}>${b||'Без бейджа'}</option>`).join('');
     return `<div class="admin-form glass">
       <h3 style="font-family:var(--font-head);font-size:14px;margin-bottom:14px;">${isNew?'Новый товар':'Редактирование товара'}</h3>
       <div class="chk-field"><div class="chk-label">Название</div><input class="chk-input" id="pf_title" value="${esc(p.title)}" placeholder="Название"></div>
       <div class="chk-field"><div class="chk-label">Цена, ₽</div><input class="chk-input" id="pf_price" type="number" inputmode="numeric" value="${p.price||0}"></div>
       <div class="chk-field"><div class="chk-label">Категория</div><select class="chk-input" id="pf_cat">${catOpts}</select><input class="chk-input" id="pf_cat_new" placeholder="Название новой категории" style="display:none;margin-top:8px;"></div>
-      <div class="chk-field"><div class="chk-label">Бейдж на карточке</div><select class="chk-input" id="pf_badge">${badgeOpts}</select></div>
       <div class="chk-field"><div class="chk-label">Фото (файл или URL)</div><input class="chk-input" id="pf_img" value="${esc(p.img||'')}" placeholder="images/p1.jpg"></div>
       <div class="chk-field"><div class="chk-label">Описание</div><textarea class="chk-input" id="pf_desc">${esc(p.desc||'')}</textarea></div>
       <div class="chk-field"><div class="chk-label">Видимость в каталоге</div>
@@ -2888,7 +2944,6 @@ function wireAdminProducts(){
     let cat = body.querySelector('#pf_cat').value;
     const img = body.querySelector('#pf_img').value.trim();
     const desc = body.querySelector('#pf_desc').value.trim();
-    const badge = body.querySelector('#pf_badge') ? body.querySelector('#pf_badge').value : '';
     const hidden = !body.querySelector('#pf_visible').classList.contains('on');
     const popular = !!(body.querySelector('#pf_popular') && body.querySelector('#pf_popular').classList.contains('on'));
     if(title.length<2){ toast('Укажи название','⚠️'); return; }
@@ -2909,9 +2964,9 @@ function wireAdminProducts(){
           if(o.stock!=='' && o.stock!==null && o.stock!==undefined && !isNaN(stv)) opt.stock = Math.max(0, stv);
           return opt;
         }) }));
-    if(p){ Object.assign(p, {title,price,cat,img,desc,hidden,popular,groups:cleanGroups,badge:badge||undefined}); logAction('Изменён товар: '+title); }
+    if(p){ Object.assign(p, {title,price,cat,img,desc,hidden,popular,groups:cleanGroups}); delete p.badge; logAction('Изменён товар: '+title); }
     else {
-      products.push({ id:Date.now(), cat, title, desc, price, img, ph:'ph'+(1+(products.length%7)), groups:cleanGroups, hidden, popular, badge:badge||undefined });
+      products.push({ id:Date.now(), cat, title, desc, price, img, ph:'ph'+(1+(products.length%7)), groups:cleanGroups, hidden, popular });
       logAction('Добавлен товар: '+title);
     }
     editProductId = null;
@@ -3076,12 +3131,12 @@ function adminBonusHTML(){
   const rows = pointAdjustments.slice().reverse().map(a=>`
     <div class="admin-row glass">
       <div class="ric">💎</div>
-      <div class="rmain"><b>@${esc(a.username)} · +${+a.amount||0}</b><span>${esc(a.note||'без заметки')} · ${new Date(a.at).toLocaleString('ru-RU')}</span></div>
+      <div class="rmain"><b>${a.tgId ? 'ID ' + esc(a.tgId) : '@' + esc(a.username)} · +${+a.amount||0}</b><span>${esc(a.note||'без заметки')} · ${new Date(a.at).toLocaleString('ru-RU')}</span></div>
       <div class="rbtn" data-bdel="${esc(a.id)}">🗑</div>
     </div>`).join('');
   return `<p class="note" style="margin-bottom:12px;">Бонусы начислятся пользователю с этим юзернеймом при следующем открытии приложения — даже если он ещё ни разу не заходил в бота.</p>
     <div class="admin-form glass" style="margin-bottom:12px;">
-      <div class="chk-field"><div class="chk-label">Юзернейм (без @)</div><input class="chk-input" id="bn_user" placeholder="username"></div>
+      <div class="chk-field"><div class="chk-label">Юзернейм (без @) или Telegram ID</div><input class="chk-input" id="bn_user" placeholder="username или 7705124098"></div>
       <div class="chk-field"><div class="chk-label">Сколько бонусов</div><input class="chk-input" id="bn_amount" type="number" inputmode="numeric" placeholder="1000"></div>
       <div class="chk-field"><div class="chk-label">Заметка (необязательно)</div><input class="chk-input" id="bn_note" placeholder="за что"></div>
       <div class="chk-submit" id="bn_add" style="padding:13px;">＋ Начислить</div>
@@ -3091,15 +3146,19 @@ function adminBonusHTML(){
 function wireAdminBonus(){
   const body = document.getElementById('adminBody');
   body.querySelector('#bn_add').addEventListener('click', ()=>{
-    const username = body.querySelector('#bn_user').value.trim().replace(/^@/,'').toLowerCase();
+    const raw = body.querySelector('#bn_user').value.trim().replace(/^@/,'');
     const amount = parseInt(body.querySelector('#bn_amount').value,10)||0;
     const note = body.querySelector('#bn_note').value.trim().slice(0,60);
-    if(username.length < 3){ toast('Укажи юзернейм','⚠️'); return; }
+    const isId = /^\d+$/.test(raw);
+    if(!isId && raw.toLowerCase().length < 3){ toast('Укажи юзернейм или ID','⚠️'); return; }
+    if(isId && raw.length < 4){ toast('ID слишком короткий','⚠️'); return; }
     if(amount <= 0){ toast('Укажи количество бонусов','⚠️'); return; }
-    pointAdjustments.push({ id:'pa'+Date.now().toString(36)+Math.random().toString(36).slice(2,5), username, amount, note, at:new Date().toISOString() });
+    const entry = { id:'pa'+Date.now().toString(36)+Math.random().toString(36).slice(2,5), amount, note, at:new Date().toISOString() };
+    if(isId) entry.tgId = raw; else entry.username = raw.toLowerCase();
+    pointAdjustments.push(entry);
     LS.set('cl_point_adj', pointAdjustments); syncCloud(true);
-    logAction('Начислено ' + amount + ' бонусов @' + username);
-    renderAdmin(); toast('Начислено @' + username,'💎');
+    logAction('Начислено ' + amount + ' бонусов ' + (isId ? ('ID ' + raw) : ('@' + raw.toLowerCase())));
+    renderAdmin(); toast('Начислено ' + (isId ? 'ID ' + raw : '@' + raw.toLowerCase()),'💎');
   });
   body.querySelectorAll('[data-bdel]').forEach(b=>b.addEventListener('click', ()=>{
     const i = pointAdjustments.findIndex(a=>a.id===b.dataset.bdel);
@@ -3199,6 +3258,7 @@ function adminDesignHTML(){
       <div class="chk-field"><div class="chk-label">Основной цвет</div><input type="color" class="cat-color" id="ac1" value="${a1}" style="width:100%;height:44px;"></div>
       <div class="chk-field"><div class="chk-label">Второй цвет (градиент)</div><input type="color" class="cat-color" id="ac2" value="${a2}" style="width:100%;height:44px;"></div>
       <div class="acc-preview" id="acPrev"></div>
+      <div class="chk-field"><div class="chk-label">Линия брендов на главной (через запятую)</div><textarea class="chk-input" id="ac_brands" rows="2" placeholder="VAPORESSO, VOOPOO, OXVA…">${esc(settings.brandsLine!=null?settings.brandsLine:'')}</textarea></div>
       <div class="form-actions">
         <div class="cancel-btn" id="ac_reset">Сбросить</div>
         <div class="chk-submit" id="ac_save">Сохранить</div>
@@ -3212,10 +3272,12 @@ function wireAdminDesign(){
   p1.addEventListener('input', paint); p2.addEventListener('input', paint); paint();
   body.querySelector('#ac_save').addEventListener('click', ()=>{
     settings.accent1 = p1.value; settings.accent2 = p2.value;
+    settings.brandsLine = body.querySelector('#ac_brands').value.trim();
     applyAccent();
+    renderBrandsLine();
     LS.set('cl_settings', settings); syncCloud(true);
-    logAction('Изменены акцентные цвета: ' + p1.value + ' → ' + p2.value);
-    toast('Цвета применены','🎨');
+    logAction('Изменено оформление (цвета/бренды)');
+    toast('Оформление применено','🎨');
   });
   body.querySelector('#ac_reset').addEventListener('click', ()=>{
     settings.accent1 = ''; settings.accent2 = '';
@@ -3272,6 +3334,9 @@ function wireAdminData(){
     r.readAsText(f);
   });
   body.querySelector('#ex_wipe_orders').addEventListener('click', ()=>{
+    const tomb = LS.get('cl_ord_del', []);
+    localOrders.forEach(o=>{ if(o && o.id && !tomb.includes(o.id)) tomb.push(o.id); });
+    LS.set('cl_ord_del', tomb.slice(-500));
     localOrders = []; LS.set('cl_orders', localOrders);
     logAction('Все заказы удалены');
     syncCloud(true); renderAdmin(); toast('Заказы очищены','🗑');
@@ -3300,10 +3365,12 @@ requestAnimationFrame(()=>{ updateNavThumb(true); setSegment(currentCat, false);
   if(pl){ if(CONFIG.PROMO_TEXT) pl.textContent = CONFIG.PROMO_TEXT; else pl.style.display = 'none'; }
   const bt = document.getElementById('brandsTrack');
   if(bt){
-    const brands = String(CONFIG.BRANDS_LINE||'').split('·').map(s=>s.trim()).filter(Boolean);
+    const raw = String(settings.brandsLine!=null && settings.brandsLine!=='' ? settings.brandsLine : (CONFIG.BRANDS_LINE||''));
+    const brands = raw.split(/[·,]/).map(s=>s.trim()).filter(Boolean);
     const seq = brands.map(b=>`<span>${esc(b)}</span>`).join('');
     bt.innerHTML = seq + seq;
     if(!brands.length) bt.parentElement.style.display = 'none';
+    else bt.parentElement.style.display = '';
   }
 })();
 updateLoyalty();
@@ -3327,5 +3394,5 @@ if(DB.ready){
   processCashback(); updateLoyalty();
 }
 </script>
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a3c7fd5ccc4f3232',t:'MTc4OTY0NjgzNw=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a3ca7b14b8f36055',t:'MTc4OTY3Mjk1OA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
